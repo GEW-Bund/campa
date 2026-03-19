@@ -1,721 +1,841 @@
-# Aktualisierte Dokumentation
-
-Ich erstelle dir **zwei aktualisierte Versionen**:
-
----
-
-## 1. **README.md** (Hauptdokumentation)
+# 📝 LLM.md (Komplett überarbeitet)
 
 ```markdown
-# Campa — Modulares Kampagnen-Landingpage-System
+# Campa — LLM Context & Technical Documentation
 
-> Dokumentation für Menschen und LLMs.
-> Aktualisiert nach Bugfixes und Verbesserungen, März 2026.
-
----
-
-## Was ist Campa?
-
-Campa ist ein statisches Website-System für politische Kampagnen-Landingpages. Jede Kampagne ist eine eigene Seite mit eigenem Theme, eigenem Inhalt — aber gleichem technischen Fundament.
-
-**Zielgruppe:** Technisch affine Person, die Inhalte selbst pflegt (via GitHub Web-Editor oder lokal), aber nicht für jede Kampagne von vorne anfangen will.
+> Vollständige technische Dokumentation für Large Language Models.
+> Dokumentiert alle Architektur-Entscheidungen, Lessons Learned und Debugging-Patterns.
+> Stand: März 2026
 
 ---
 
-## Stack
+## Executive Summary
 
-| Komponente | Entscheidung | Begründung |
-|---|---|---|
-| Static Site Generator | Hugo | Kein Node auf dem Server nötig, sehr schnell |
-| CSS | Tailwind v3 CLI (separat kompiliert) | Utility-first + kampagnenspezifische Themes |
-| Fonts | Lokal (TTF in `static/fonts/`) | DSGVO-konform, kein Google Fonts |
-| CI/CD | GitHub Actions → rsync | Einfach, kein Coolify (kollidiert mit SWAG+CrowdSec) |
-| Hosting | Arch Linux VPS, SWAG + CrowdSec + Nginx Bouncer | Bestehende Infrastruktur |
-| Node.js | Nur in GitHub Actions + lokal für CSS-Build, nie auf Server | Hugo braucht kein Node zur Laufzeit |
+**Campa** ist ein Hugo-basiertes Static Site Generator System für politische Kampagnen-Landingpages. 
 
-**Wichtig:** Tailwind v3 verwenden — v4 ist inkompatibel mit dem Setup.
+**Kern-Philosophie:** Hybrid-Architektur mit Build-Tools auf Host und nur Services in Docker.
+
+**Deployment-Methode:** GitHub Webhook → Host systemd-Service → Shell-Script (git pull + CSS build + Hugo build)
 
 ---
 
-## Projektstruktur
+## Finale Architektur (März 2026)
 
-```
-kampagnen-site/
-├── .github/workflows/deploy.yml        ← CI/CD: Build + rsync zum Server
-├── assets/css/main.css                 ← Tailwind-Quelldatei (Input für tailwindcss CLI)
-├── static/css/
-│   ├── main.css                        ← Generierte CSS (von npm run dev:css)
-│   └── themes/kampagne-demo.css        ← CSS-Variablen pro Kampagne
-├── layouts/
-│   ├── _default/
-│   │   ├── baseof.html                 ← HTML-Grundgerüst
-│   │   ├── single.html                 ← Fallback für einzelne Seiten
-│   │   └── legal.html                  ← Layout für Impressum/Datenschutz
-│   ├── kampagnen/
-│   │   └── legal.html                  ← Kopie (Hugo-Lookup-Fix)
-│   ├── index.html                      ← Iteriert über blocks:-Liste aus _index.md
-│   └── partials/
-│       ├── nav.html
-│       ├── footer.html
-│       ├── hero.html
-│       ├── back-to-top.html            ← ↑ Pfeil, wird in jeden Block eingebunden
-│       ├── block-textblock.html
-│       ├── block-slider.html           ← Scroll-Snap Slider mit Prev/Next + Dots
-│       ├── block-faq.html
-│       ├── block-cta.html              ← CTA-Banner mit flexibler Datenquelle
-│       ├── block-logos.html            ← Logo-Leiste (dezent, grayscale)
-│       ├── block-imagetext.html
-│       ├── block-accordion.html
-│       └── scripts.html                ← Slider-JS + FAQ-JS
-├── content/
-│   ├── _index.md                       ← HAUPT-KONFIGURATION (Hero, Blocks, Nav, Footer)
-│   └── kampagnen/kampagne-demo/
-│       ├── textblock1.md
-│       ├── textblock2.md
-│       ├── faq.md                      ← H3 = ein Aufklappelement
-│       ├── impressum.md
-│       └── datenschutz.md
-├── static/
-│   ├── fonts/                          ← TTF-Dateien (lokal gehostet)
-│   └── images/kampagne-demo/           ← Bilder (header.jpg, slide1-4.jpg, logos)
-├── hugo.toml                           ← KEIN theme="" (verursacht Fehler!)
-├── tailwind.config.js
-└── package.json                        ← tailwindcss@3 explizit!
-```
+### Stack
 
----
+| Komponente | Technologie | Wo | Warum |
+|------------|-------------|-----|-------|
+| Static Site Generator | Hugo Extended | Host | Single Binary, keine Dependencies |
+| CSS Framework | Tailwind CSS v3 (CLI) | Host (via Node) | Kompiliert assets/ → static/ |
+| Node.js | v25 (via NVM) | Host | Für Tailwind CSS Build |
+| Git | System Git | Host | Repository Management |
+| Webhook-Listener | webhook binary (Go) | Host (systemd) | Empfängt GitHub POST |
+| Web-Server | Nginx (optional SWAG) | Docker oder Host | Liefert Static Files |
+| Deployment-Trigger | GitHub Webhook | Cloud | HTTPS POST bei Push |
 
-## Lokale Entwicklung
-
-```bash
-# Node-Version setzen (v25+ ist inkompatibel mit Tailwind v3)
-source /usr/share/nvm/init-nvm.sh
-nvm use 20
-
-# Abhängigkeiten installieren
-npm install
-
-# Terminal 1: CSS watch (kompiliert assets/css/main.css → static/css/main.css)
-npm run dev:css
-
-# Terminal 2: Hugo dev server (lädt CSS aus static/)
-hugo server
-```
-
-Aufruf: http://localhost:1313
-
----
-
-## Kampagne konfigurieren: `content/_index.md`
-
-Die gesamte Kampagne wird über diese eine Datei gesteuert. Das ist die einzige Datei die Hugo als Startseite rendert.
-
-```yaml
----
-title: "Schule zeigt Haltung"
-description: "Lehrkräfte stärken — Demokratie schützen."
-kampagne: "kampagne-demo"           ← muss mit Ordnernamen übereinstimmen
-theme_css: "kampagne-demo.css"      ← lädt static/css/themes/kampagne-demo.css
-
-nav_links:
-  - label: "Petition"
-    url: "#petition"                ← Springt zu Block mit id: petition
-  - label: "Forderungen"
-    url: "#forderungen"
-
-hero:
-  eyebrow: "Mythos Neutralität"
-  title: "Schule ist nicht neutral!"
-  image: "/images/kampagne-demo/header.jpg"
-  image_alt: "Header Bild"
-  text: "Fließtext unter dem Titel."
-  cta_label: "Petition unterzeichnen"
-  cta_url: "https://weact.campact.de"
-
-slider:
-  title: "Die Petition"
-  images:
-    - src: "/images/kampagne-demo/slide1.jpg"
-      alt: "Beschreibung"
-      caption: "Bildunterschrift"
-
-blocks:
-  - type: textblock
-    src: textblock1
-    bg: light
-    id: intro                       ← ID für Anker-Links (#intro)
-  
-  - type: slider
-    id: petition                    ← ID muss hier stehen, nicht in slider:!
-  
-  - type: cta
-    id: kontakt
-    bg: accent                      ← Hintergrundfarbe wie bei anderen Blöcken
-    title: "Jetzt Haltung zeigen"
-    text: "Unterzeichnen Sie unsere Petition."
-    button:
-      label: "Zur Petition"
-      url: "https://weact.campact.de"
-      color: primary
-
-footer_links:
-  - label: "Impressum"
-    url: "/kampagnen/kampagne-demo/impressum"
-  - label: "Datenschutz"
-    url: "/kampagnen/kampagne-demo/datenschutz"
-footer_text: "© 2026 Schule zeigt Haltung"
----
-```
-
----
-
-## Block-System
-
-Blöcke werden in der `blocks:`-Liste in `_index.md` definiert. Reihenfolge = Darstellungsreihenfolge.
-
-### Verfügbare Block-Typen
-
-| type | Parameter | Beschreibung |
-|---|---|---|
-| `textblock` | `src`, `bg`, `id` | Markdown-Datei als Textblock |
-| `slider` | `id` | Bildslider aus `slider.images` in _index.md |
-| `faq` | `src`, `title`, `bg`, `id` | FAQ aus Markdown (H3 = Frage) |
-| `logos` | `title`, `bg`, `items[]` | Logo-Leiste (dezent, grayscale) |
-| `cta` | `id`, `bg`, `title`, `text`, `button{}` | CTA-Banner (Daten im Block oder global) |
-| `imagetext` | `src`, `image`, `bg`, `id`, `button{}` | Bild + Text nebeneinander |
-| `accordion` | `title`, `bg`, `items[]` | Aufklapp-Elemente |
-
-### Hintergrundfarben (`bg`)
-
-| Wert | Farbe | Überschriften | Body |
-|---|---|---|---|
-| `light` | Warmes Grau | Lila | Dunkel |
-| `white` | Reines Weiß | Lila | Dunkel |
-| `dark` | Lila | Gelb | Weiß |
-| `accent` | Gelb | Lila | Dunkelgrau |
-
-### Anker-Links (Navigation)
-
-**IDs müssen im `blocks:`-Array stehen:**
-
-```yaml
-# ✅ RICHTIG
-blocks:
-  - type: slider
-    id: petition      # ← Wird zu <section id="petition">
-
-nav_links:
-  - label: "Petition"
-    url: "#petition"  # ← Springt zur Section
-
-# ❌ FALSCH
-slider:
-  id: petition        # ← Hugo findet das nicht!
-
-blocks:
-  - type: slider      # ← Keine ID!
-```
-
----
-
-## Theme-Variablen: `static/css/themes/kampagne-demo.css`
-
-Jede Kampagne hat ihre eigene Theme-Datei mit CSS Custom Properties:
-
-```css
-@font-face {
-  font-family: 'Permanent Marker';
-  src: url('/fonts/PermanentMarker-Regular.ttf') format('truetype');
-  font-display: swap;
-}
-
-:root {
-  --color-primary:     #5815a0;   /* Lila — Hauptfarbe */
-  --color-accent:      #e5e01d;   /* Gelb — Akzent */
-  --color-bg:          #f8f7f4;   /* Warmes Grau */
-  --color-text:        #1a1a1a;
-  --color-text-light:  #555555;
-  --color-border:      #d0ccc4;
-  --font-heading:      'Permanent Marker', cursive;
-  --font-body:         'Liter', system-ui, sans-serif;
-}
-```
-
----
-
-## CSS-Pipeline verstehen
+### Deployment-Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  assets/css/main.css                                         │
-│  - Tailwind Direktiven (@tailwind base, components, etc.)   │
-│  - Alle globalen Styles (.cta-banner, .section-*, etc.)     │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-              ┌────────────────────────┐
-              │  npm run dev:css       │
-              │  (Tailwind CLI v3)     │
-              └────────────────────────┘
+│  1. Redakteur editiert auf GitHub.com                        │
+│     - Klickt auf .md Datei                                   │
+│     - Edit → Commit changes                                  │
+└──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  static/css/main.css                                         │
-│  - Kompilierte CSS (Tailwind + Custom Styles)               │
-│  - Diese Datei wird von Hugo geladen                         │
-└─────────────────────────────────────────────────────────────┘
+│  2. GitHub sendet Webhook POST                               │
+│     URL: https://domain.de/webhook-SECRET-PATH/              │
+│     Header: X-Hub-Signature-256 (HMAC SHA256)                │
+│     Body: {"ref":"refs/heads/main", ...}                     │
+└──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
-              ┌────────────────────────┐
-              │  baseof.html           │
-              │  <link href="/css/     │
-              │    main.css">          │
-              └────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  3. Nginx empfängt (Port 443)                                │
+│     - SSL-Terminierung                                       │
+│     - proxy_pass → localhost:9000                            │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│  4. Webhook-Service (systemd, Port 9000)                     │
+│     - Liest hooks.json                                       │
+│     - Validiert HMAC SHA256 Secret                           │
+│     - Prüft: ref == "refs/heads/main"                        │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│  5. deploy.sh wird ausgeführt (als normaler User)            │
+│     a) cd ~/repos/kampagnen-site                             │
+│     b) git pull origin main                                  │
+│     c) source nvm → nvm use 25                               │
+│     d) npm install                                           │
+│     e) npm run build:css (Tailwind CLI)                      │
+│     f) hugo --minify -d /var/www/site/                       │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│  6. Output landet in Web-Root                                │
+│     - index.html                                             │
+│     - css/main.css                                           │
+│     - images/                                                │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│  7. Nginx liefert aktualisierte Seite aus                    │
+│     - Static Files                                           │
+│     - Asset-Caching (1 Jahr)                                 │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Wichtig:**
-- `assets/css/main.css` ist die **Quelldatei** (editieren!)
-- `static/css/main.css` ist **generiert** (nicht von Hand ändern!)
-- Hugo lädt die CSS **direkt** aus `static/` (kein PostCSS in Hugo!)
+**Reaktionszeit:** ~10-20 Sekunden (abhängig von Repo-Größe)
 
 ---
 
-## Inhalte bearbeiten
+## Architektur-Entscheidungen
 
-### Textblock ändern
-Datei `content/kampagnen/kampagne-demo/textblock1.md` bearbeiten.
-Markdown wird direkt gerendert. H2 = Abschnittstitel, H3 = Unterabschnitt.
+### Entscheidung 1: Webhook auf Host statt Docker
 
-### FAQ bearbeiten
-Datei `content/kampagnen/kampagne-demo/faq.md` bearbeiten.
-**Jedes H3 (`###`) wird zu einem Aufklappelement.**
+**Problem:** Ursprünglich war geplant, Webhook + Hugo + Node in Docker-Containern laufen zu lassen.
 
-```markdown
-### Was bedeutet Neutralitätsgebot?
-Antworttext hier...
+**Herausforderungen:**
+1. Webhook-Container kann nicht auf Host-Git zugreifen
+2. Webhook-Container braucht Docker Socket für `docker compose run` (Security-Risk!)
+3. Custom Dockerfile mit Git + Hugo + Node → Große Images, schwer wartbar
+4. Komplexität steigt exponentiell
 
-### Darf ich politische Aussagen machen?
-Weitere Antwort...
-```
+**Recherche-Ergebnis:** Standard-Practice für Build-Tools ist Host-Installation.
 
-### Bilder tauschen
-Datei mit gleichem Namen überschreiben in `static/images/kampagne-demo/`.
-- `header.jpg` — Hero-Bild (Querformat empfohlen)
-- `slide1.jpg` bis `slide4.jpg` — Slider-Bilder (4:5 Hochformat, z.B. 1200×1500px)
-- Logos als PNG mit Transparenz (werden automatisch grayscale und auf dunklem BG invertiert)
+**Reddit/Community-Consensus:**
+> "Native installations for build tools, containers for deployment services."
 
----
+**Hugo ist kein Service!** Es läuft 5 Sekunden, dann ist es fertig. Docker ist Overkill.
 
-## CTA-Block: Flexible Datenquellen
+**Finale Entscheidung:** Webhook als systemd-Service auf Host.
 
-Der CTA-Block kann Daten aus **zwei Stellen** beziehen:
-
-### Variante 1: Daten direkt im Block (empfohlen)
-```yaml
-blocks:
-  - type: cta
-    id: kontakt
-    bg: accent
-    title: "Jetzt Haltung zeigen"
-    text: "Unterzeichnen Sie unsere Petition."
-    button:
-      label: "Zur Petition"
-      url: "https://example.com"
-      color: primary
-```
-
-### Variante 2: Separates globales `cta:`-Objekt
-```yaml
-cta:
-  title: "Jetzt Haltung zeigen"
-  text: "..."
-  button_label: "Zur Petition"
-  button_url: "https://example.com"
-  button_color: "primary"
-
-blocks:
-  - type: cta
-    id: kontakt    # Nur ID, keine Inhalte
-```
-
-**Das Partial prüft automatisch:** Gibt es `title` im Block? → Block hat Vorrang. Sonst: Nutze globales `cta:`.
+**Vorteile:**
+- ✅ Direkter Zugriff auf Git, NVM, Hugo
+- ✅ Kein Docker Socket Risk
+- ✅ Einfacher zu debuggen (journalctl)
+- ✅ Weniger Komponenten = weniger Fehler
 
 ---
 
-## Deployment
+### Entscheidung 2: Hugo auf Host statt Container
 
-### GitHub Actions Secrets
+**Hugo = Single Binary (~90 MB), KEINE Runtime-Dependencies!**
 
-| Secret | Inhalt |
-|---|---|
-| `SSH_PRIVATE_KEY` | Privater SSH-Key (ed25519) |
-| `REMOTE_HOST` | Server IP oder Hostname |
-| `REMOTE_USER` | `campa` |
-| `REMOTE_PATH` | `/var/www/campa/kampagne-demo/` |
+**Recherche-Ergebnis:**
+- Community nutzt Hugo primär nativ
+- Docker-Images vor allem für CI/CD (reproduzierbare Umgebung)
+- Für VPS-Deployment: Binary auf Host ist Standard
 
-### Server-Setup (einmalig)
+**Zitat aus Blog:**
+> "How I went from an overengineered Docker + Tilt.dev setup to just running Hugo directly, and why sometimes simpler is better."
+
+**Entscheidung:** Hugo via Package-Manager installieren (`pacman -S hugo`)
+
+**Vorteil:** Updates via `pacman -Syu`, kein Container-Management.
+
+---
+
+### Entscheidung 3: Node v25 statt v20
+
+**Ursprüngliche Annahme:** "Node v25+ ist inkompatibel mit Tailwind v3"
+
+**Test-Ergebnis:** Node v25.8.1 + Tailwind v3.4.x = **funktioniert einwandfrei!**
 
 ```bash
-# Dedizierter Deploy-User ohne sudo
-useradd --system --no-create-home --shell /usr/sbin/nologin campa
-groupadd campa
-usermod -aG campa stef
+$ node --version
+v25.8.1
 
-# Verzeichnis
-mkdir -p /var/www/campa/kampagne-demo
-chown -R campa:campa /var/www/campa/
-chmod -R 775 /var/www/campa/
-chmod g+s /var/www/campa/
-
-# SSH-Key hinterlegen (nur rsync erlaubt)
-# authorized_keys mit command="" restriction
+$ npm run build:css
+Rebuilding...
+Done in 830ms
+✅ Kein Fehler!
 ```
 
-### SWAG Nginx-Config (Beispiel)
+**Entscheidung:** Node v25 nutzen (neueste Version).
+
+**Lesson Learned:** Alte Warnings in Dokumentation waren veraltet. Immer testen!
+
+---
+
+### Entscheidung 4: GitHub Webhook statt GitHub Actions
+
+**Ursprünglicher Plan:** GitHub Actions baut in der Cloud, rsync zu VPS.
+
+**Problem:** SSH-Key muss in GitHub Secrets → Security-Concern.
+
+**Alternative Patterns recherchiert:**
+
+| Pattern | Vorteile | Nachteile |
+|---------|----------|-----------|
+| GitHub Actions + rsync | Build in Cloud, VPS spart Ressourcen | SSH-Key in GitHub |
+| Git Post-Receive Hook | Einfach, direkt | Kein GitHub Web-Editor möglich |
+| **Webhook + VPS Build** | VPS kontrolliert, kein SSH-Key in GitHub | Build auf VPS nötig |
+
+**Use-Case:** Redakteure sollen auf GitHub.com editieren können (Web-UI!).
+
+**Entscheidung:** Webhook + VPS Build
+
+**Begründung:**
+- ✅ GitHub nur für Collaboration & Web-Editor
+- ✅ Kein gefährlicher SSH-Key in GitHub
+- ✅ VPS hat volle Kontrolle über Deployment
+- ✅ Hugo Forum empfiehlt dieses Pattern explizit
+
+---
+
+## Verzeichnisstruktur (Production)
+
+```
+/home/$USER/
+├── repos/
+│   └── kampagnen-site/                 ← Git-Repo (HTTPS clone)
+│       ├── .git/
+│       ├── content/
+│       ├── layouts/
+│       ├── static/
+│       ├── assets/css/main.css         ← Tailwind-Quelle
+│       ├── hugo.toml
+│       ├── package.json
+│       └── tailwind.config.js
+│
+├── webhook/
+│   ├── config/
+│   │   ├── hooks.json                  ← Webhook-Konfiguration
+│   │   └── deploy.log                  ← Deploy-Logs (stdout+stderr)
+│   └── scripts/
+│       └── deploy.sh                   ← Deploy-Script
+│
+└── .nvm/                               ← NVM-Installation (optional)
+    └── versions/node/v25.8.1/
+
+/var/www/
+└── kampagnen-site/                     ← Hugo Output (public/)
+    ├── index.html
+    ├── css/
+    │   └── main.css                    ← Kompilierte Tailwind-CSS
+    ├── images/
+    └── fonts/
+
+/etc/systemd/system/
+└── webhook.service                     ← systemd-Service-Definition
+
+/etc/nginx/                             ← Oder: Docker-Volume
+└── sites-available/
+    └── kampagne.conf                   ← Nginx-Config
+```
+
+---
+
+## Kritische Dateien im Detail
+
+### hooks.json
+
+**Pfad:** `~/webhook/config/hooks.json`
+
+**Schema:**
+```json
+[
+  {
+    "id": "deploy-kampagne",
+    "execute-command": "/absoluter/pfad/zu/deploy.sh",
+    "command-working-directory": "/tmp",
+    "response-message": "Deployment gestartet!",
+    "trigger-rule": {
+      "and": [
+        {
+          "match": {
+            "type": "payload-hmac-sha256",
+            "secret": "SECRET_STRING",
+            "parameter": {
+              "source": "header",
+              "name": "X-Hub-Signature-256"
+            }
+          }
+        },
+        {
+          "match": {
+            "type": "value",
+            "value": "refs/heads/main",
+            "parameter": {
+              "source": "payload",
+              "name": "ref"
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+```
+
+**Wichtige Details:**
+- `execute-command` muss **absoluter Pfad** sein!
+- `command-working-directory` ist irrelevant wenn absoluter Pfad genutzt wird
+- `secret` wird mit `openssl rand -hex 32` generiert
+- Webhook binary erkennt Änderungen automatisch (hotreload, kein Restart nötig!)
+- `trigger-rule.and[]` = ALLE Bedingungen müssen erfüllt sein (Secret UND Branch)
+
+**Fehlerquellen:**
+- Relativer Pfad → `stat: no such file or directory`
+- Secret falsch → `trigger rules were not satisfied`
+- Header fehlt → `parameter node not found: X-Hub-Signature-256` (Nginx Config!)
+
+---
+
+### deploy.sh
+
+**Pfad:** `~/webhook/scripts/deploy.sh`
+
+**Best Practices:**
+```bash
+#!/bin/bash
+set -e  # ← Stoppt bei erstem Fehler!
+
+REPO_DIR="$HOME/repos/kampagnen-site"
+WEB_DIR="/var/www/kampagnen-site"
+LOG="$HOME/webhook/config/deploy.log"
+
+echo "========================================" >> "$LOG"
+echo "$(date): Deploy gestartet" >> "$LOG"
+
+# Git pull
+cd "$REPO_DIR" || exit 1
+git pull origin main >> "$LOG" 2>&1  # ← stdout + stderr ins Log!
+
+# NVM laden (Pfad kann variieren!)
+source ~/.nvm/nvm.sh || source /usr/share/nvm/init-nvm.sh
+nvm use 25 >> "$LOG" 2>&1
+
+# CSS Build
+npm install >> "$LOG" 2>&1
+npm run build:css >> "$LOG" 2>&1
+
+# Hugo Build
+hugo --minify -d "$WEB_DIR" >> "$LOG" 2>&1
+
+echo "$(date): Deploy erfolgreich!" >> "$LOG"
+echo "" >> "$LOG"
+```
+
+**Wichtige Details:**
+- `set -e` → Script stoppt bei Fehler (wichtig!)
+- Alle Befehle mit `>> "$LOG" 2>&1` → stdout + stderr werden geloggt
+- `source nvm` → NVM muss explizit geladen werden (non-interactive Shell!)
+- `nvm use 25` → Node-Version explizit setzen (nicht auf $PATH verlassen)
+- `|| exit 1` bei kritischen Befehlen → Verhindert Folge-Fehler
+- Absoluter Pfad für `WEB_DIR` → Verhindert versehentliches Löschen falscher Ordner
+
+**Fehlerquellen:**
+- `nvm: command not found` → NVM-Pfad falsch
+- `hugo: command not found` → Hugo nicht installiert oder nicht in $PATH
+- `Permission denied` → deploy.sh nicht ausführbar (`chmod +x`)
+- Relativer Pfad → Kann in falschem Verzeichnis landen
+
+---
+
+### systemd-Service
+
+**Pfad:** `/etc/systemd/system/webhook.service`
+
+```ini
+[Unit]
+Description=GitHub Webhook Server
+After=network.target
+
+[Service]
+Type=simple
+User=$USER                              # ← Normaler User, nicht root!
+Group=$USER
+WorkingDirectory=/home/$USER/webhook
+ExecStart=/usr/bin/webhook -hooks /home/$USER/webhook/config/hooks.json -verbose -port 9000
+Restart=always
+RestartSec=5
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=webhook
+
+[Install]
+WantedBy=multi-user.target
+```
+
+**Wichtige Details:**
+- `User=$USER` → Service läuft als normaler User (Security!)
+- `After=network.target` → Startet erst wenn Netzwerk verfügbar
+- `Restart=always` + `RestartSec=5` → Auto-Restart bei Crash
+- `StandardOutput=journal` → Logs gehen in journald (nicht in Datei!)
+- `WorkingDirectory` → Basis für relative Pfade (aber wir nutzen absolute!)
+- `-verbose` → Webhook loggt jeden Request
+- `-port 9000` → Localhost-Port (nicht nach außen exponiert!)
+
+**Logs ansehen:**
+```bash
+# Live-Logs
+sudo journalctl -u webhook -f
+
+# Letzte 50 Zeilen
+sudo journalctl -u webhook -n 50
+
+# Seit heute
+sudo journalctl -u webhook --since today
+```
+
+---
+
+### Nginx Config
+
+**Zwei Teile:**
+
+#### 1. Static Files
 ```nginx
 server {
-    listen 443 ssl;
-    server_name kampagne.example.com;
-
-    root /var/www/campa/kampagne-demo;
+    listen 443 ssl http2;
+    server_name kampagne.domain.de;
+    
+    root /var/www/kampagnen-site;
     index index.html;
 
     location / {
         try_files $uri $uri/ =404;
     }
+
+    # Asset-Caching
+    location ~* \.(jpg|jpeg|png|webp|svg|css|js|woff2|ttf)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
 }
 ```
 
----
-
-## Bekannte Fallstricke & Lösungen
-
-| Problem | Ursache | Fix |
-|---|---|---|
-| Hugo-Fehler `theme not found` | `theme = ""` in hugo.toml | Zeile komplett entfernen |
-| Tailwind generiert kein CSS | Node v25+ inkompatibel | `nvm use 20` |
-| CSS greift nicht | `npm run dev:css` vergessen | Terminal mit Watch starten |
-| Änderungen in `assets/css/main.css` greifen nicht | `npm run dev:css` läuft nicht | Neu starten, warten bis "Done" |
-| Nav-Link springt nicht | ID steht in `slider:` statt `blocks:` | ID in den Block verschieben |
-| CTA wird nicht angezeigt | Daten fehlen oder falsches Format | Block-Daten haben Vorrang über globales `cta:` |
-| CTA hat Streifen | `.cta-banner::before` in main.css | Pattern entfernen/auskommentieren |
-| CTA-Abstände zu groß | `padding: 5rem 2rem` | Auf `2rem 2rem` oder `1.5rem 2rem` reduzieren |
-| Slider zeigt mehrere Bilder | `overflow: hidden` fehlt | In main.css prüfen |
-| Hugo findet `legal.html` nicht | Lookup-Reihenfolge bei Unterseiten | Kopie in `layouts/kampagnen/` anlegen |
-
----
-
-## Debugging-Checkliste
-
-### CSS wird nicht geladen?
-1. Läuft `npm run dev:css`? → Check Terminal 1
-2. Existiert `static/css/main.css`? → `ls static/css/`
-3. Browser DevTools → Network → CSS-Dateien sichtbar?
-
-### Anker-Link funktioniert nicht?
-1. Browser DevTools → Elements → Suche nach `id="petition"`
-2. Falls nicht gefunden: ID in `blocks:` verschieben (nicht in `slider:`)
-3. Hugo neu starten
-
-### Block wird nicht gerendert?
-1. `blocks:`-Liste in `content/_index.md` prüfen
-2. Typ richtig geschrieben? (`textblock` nicht `text-block`)
-3. Hugo-Terminal: Fehlermeldungen?
-
----
-
-## Neue Kampagne anlegen (Kurzanleitung)
-
-1. `content/kampagnen/neue-kampagne/` anlegen mit allen MD-Dateien
-2. `static/images/neue-kampagne/` anlegen, Bilder hochladen
-3. `static/css/themes/neue-kampagne.css` anlegen (Farben + Fonts)
-4. `static/fonts/` — Fonts hinterlegen falls neu
-5. `content/_index.md` — `kampagne:` und `theme_css:` anpassen, gesamten Inhalt neu befüllen
-6. GitHub Actions Secret `REMOTE_PATH` auf neues Verzeichnis setzen
-
----
-
-## Für LLMs: Kontext und Entscheidungshistorie
-
-Dieses System wurde sokratisch erarbeitet. Die wichtigsten Architekturentscheidungen:
-
-- **Warum Hugo statt Next.js/Astro?** Kein Node auf dem Server, extrem schnell, einfaches Deployment via rsync.
-- **Warum Tailwind CLI statt Hugo PostCSS?** Unabhängigkeit — CSS wird separat kompiliert, Hugo lädt nur fertiges CSS. Kein PostCSS-Setup in Hugo nötig.
-- **Warum kein Coolify?** Kollidiert mit bestehendem SWAG+CrowdSec+Nginx Bouncer Stack.
-- **Warum eine Root `_index.md` statt Kampagnen-Unterordner als Einstieg?** Hugo rendert immer `content/_index.md` als Startseite.
-- **Warum Tailwind v3?** v4 hatte Inkompatibilitäten mit dem Node v20 Setup.
-- **Warum lokale Fonts?** DSGVO — kein Laden externer Ressourcen.
-- **Warum Scroll-Snap Slider statt JS-Slider?** Nativer Browser-Support, funktioniert auch ohne JS, besser auf Mobile.
-
-Das Block-System ist bewusst einfach gehalten: Jeder Block-Typ ist ein separates Hugo-Partial. Neue Block-Typen einfach als `block-xyz.html` anlegen und in `layouts/index.html` registrieren.
-
-### Lessons Learned (März 2026)
-
-1. **IDs für Anker-Links:** Müssen immer im `blocks:`-Array stehen, nicht in den Daten-Objekten (`slider:`, `cta:`).
-2. **Context-Übergabe:** Manche Partials nutzen `(dict "block" . "page" $)` (klein), andere `(dict "Block" . "Page" $)` (groß) — konsistent halten!
-3. **CTA-Block:** Kann Daten aus Block ODER globalem `cta:`-Objekt beziehen — flexible Architektur.
-4. **CSS-Pipeline:** `assets/` → Tailwind CLI → `static/` → Hugo lädt direkt. Kein PostCSS in Hugo!
-5. **Styling-Defaults:** Nutzer wollen oft kompaktere Abstände — `padding: 2rem` statt `5rem` für Banners.
+#### 2. Webhook-Proxy
+```nginx
+location /webhook-GEHEIMER-PFAD/ {
+    proxy_pass http://127.0.0.1:9000/hooks/deploy-kampagne;
+    proxy_set_header Host $host;
+    proxy_set_header X-Hub-Signature-256 $http_x_hub_signature_256;
+}
 ```
 
+**Wenn Nginx in Docker (z.B. SWAG):**
+```nginx
+location /webhook-GEHEIMER-PFAD/ {
+    proxy_pass http://172.17.0.1:9000/hooks/deploy-kampagne;  # ← Docker Bridge IP
+    proxy_set_header Host $host;
+    proxy_set_header X-Hub-Signature-256 $http_x_hub_signature_256;
+}
+```
+
+**Wichtige Details:**
+- `172.17.0.1` = Standard Docker Bridge IP zum Host
+- `proxy_set_header X-Hub-Signature-256` → **MUSS** gesetzt werden! Sonst Webhook-Validierung schlägt fehl
+- `/webhook-GEHEIMER-PFAD/` → Sollte min. 32 Zeichen haben, zufällig generiert
+- `proxy_pass` → **Vollständiger Pfad** inkl. Hook-ID!
+
+**Alternativen zu 172.17.0.1:**
+- `host.docker.internal` (bei Docker Desktop)
+- Host-Network für Nginx (nicht empfohlen)
+- Webhook auch in Docker (dann braucht es Docker Socket → Security!)
+
 ---
 
-## 2. **Ergänzung zu KONTEXT.md** (Lessons Learned Section)
+## Hugo-Spezifika
 
-Am Ende der bestehenden KONTEXT.md anfügen:
+### content/_index.md ist ALLES!
 
-```markdown
+**Hugo rendert IMMER `content/_index.md` als Startseite.**
+
+Kampagnen-spezifische `_index.md` in Unterordnern werden **nicht** als Startseite gerendert!
+
+**Korrekte Struktur:**
+```
+content/
+├── _index.md                    ← HAUPT-KONFIGURATION (wird gerendert!)
+└── kampagnen/kampagne-demo/
+    ├── textblock1.md            ← Content-Dateien (via src: textblock1)
+    ├── faq.md
+    └── impressum.md
+```
+
+**Wichtig:** Alle Kampagnen-Settings stehen in der **Root** `_index.md`:
+- `hero:`
+- `slider:`
+- `blocks:`
+- `nav_links:`
+
 ---
 
-## Lessons Learned & Bugfixes (März 2026)
+### Block-System
 
-Diese Sektion dokumentiert Probleme, die im Dialog aufgetreten sind, und wie sie gelöst wurden.
+**Reihenfolge in `blocks:`-Liste = Darstellungsreihenfolge auf der Seite!**
 
-### 1. Anker-Links funktionieren nicht
-
-**Problem:** Navigation mit `url: "#petition"` springt nicht zum Slider.
-
-**Ursache:** Die `id` stand im falschen Objekt:
 ```yaml
-# ❌ FALSCH
-slider:
-  id: petition      # Hugo findet das nicht!
-
 blocks:
-  - type: slider    # Keine ID!
+  - type: textblock    # ← Wird als erstes gerendert
+    src: intro
+    bg: light
+  
+  - type: slider       # ← Dann der Slider
+    id: bilder
+  
+  - type: cta          # ← Dann CTA
 ```
 
-**Lösung:** IDs gehören in das `blocks:`-Array:
+**Hugo-Template (`layouts/index.html`):**
+```html
+{{ range .Params.blocks }}
+  {{ $type := .type }}
+  
+  {{ if eq $type "textblock" }}
+    {{ partial "block-textblock.html" (dict "block" . "page" $) }}
+  
+  {{ else if eq $type "slider" }}
+    {{ partial "block-slider.html" (dict "Page" $ "Block" .) }}
+  
+  {{ end }}
+{{ end }}
+```
+
+**Wichtig:** Context-Übergabe unterscheidet sich!
+- Einige Blöcke: `(dict "block" . "page" $)` (Kleinbuchstaben)
+- Andere: `(dict "Block" . "Page" $)` (Großbuchstaben)
+
+**Im Partial dann:**
+```html
+{{ $block := .block }}  <!-- oder: .Block -->
+{{ $page := .page }}    <!-- oder: .Page -->
+```
+
+**Empfehlung:** Konsistenz wahren! Alle neuen Blöcke sollten Kleinbuchstaben nutzen.
+
+---
+
+### Anker-IDs müssen im Block stehen!
+
+**❌ FALSCH:**
 ```yaml
-# ✅ RICHTIG
+slider:
+  id: bilder  # ← Hugo findet das nicht!
+
 blocks:
   - type: slider
-    id: petition    # Wird zu <section id="petition">
 ```
 
-**Pattern für Partials:**
-```html
-{{ $block := .Block }}
-<section {{ with $block.id }}id="{{ . }}"{{ end }}>
-```
-
----
-
-### 2. CSS-Änderungen greifen nicht
-
-**Problem:** Änderungen in `assets/css/main.css` erscheinen nicht im Browser.
-
-**Ursache:** Zwei mögliche Gründe:
-1. `npm run dev:css` läuft nicht → CSS wird nicht kompiliert
-2. Hugo lädt alte CSS aus Cache oder falscher Quelle
-
-**Lösung:**
-1. **Prüfen:** Läuft `npm run dev:css` im Terminal?
-2. **Warten:** Tailwind muss "Done" ausgeben nach Änderungen
-3. **Browser:** Hard-Refresh (`Cmd+Shift+R` / `Ctrl+Shift+R`)
-4. **Prüfen:** Existiert `static/css/main.css` und ist aktuell?
-
-**CSS-Pipeline nochmal:**
-```
-assets/css/main.css  →  npm run dev:css  →  static/css/main.css  →  Browser
-```
-
----
-
-### 3. CTA-Block wird nicht angezeigt
-
-**Problem:** Block vom Typ `cta` rendert nicht.
-
-**Ursache:** Das Partial `block-cta.html` suchte nur nach `$page.Params.cta`, aber die Daten standen im Block selbst.
-
-**Lösung:** Flexibles Daten-Pattern implementiert:
-```html
-{{ $cta := $page.Params.cta }}
-{{ if $block.title }}
-  {{ $cta = $block }}  {{/* Block-Daten haben Vorrang */}}
-{{ end }}
-```
-
-Jetzt funktionieren beide Varianten:
-
-**Variante 1: Daten im Block**
+**✅ RICHTIG:**
 ```yaml
 blocks:
-  - type: cta
-    title: "..."
-    text: "..."
-    button:
-      label: "..."
-      url: "..."
+  - type: slider
+    id: bilder  # ← Wird zu <section id="bilder">
 ```
 
-**Variante 2: Globales cta:-Objekt**
-```yaml
-cta:
-  title: "..."
-  button_label: "..."
-
-blocks:
-  - type: cta    # Keine Inhalte, nutzt globales Objekt
-```
+**Grund:** `layouts/index.html` iteriert über `blocks:`, nicht über `slider:`!
 
 ---
 
-### 4. CTA-Block hat Hintergrundstreifen und zu große Abstände
+### Tailwind CSS Pipeline
 
-**Problem:** CTA sieht überladen aus (Diagonalstreifen-Pattern, große Padding-Werte).
-
-**Lösung:**
-
-**a) Pattern entfernen in `assets/css/main.css`:**
-```css
-/* .cta-banner::before { ... }  ← Auskommentiert */
+```
+┌─────────────────────────────────────┐
+│  assets/css/main.css                │  ← Quelldatei (editieren!)
+│  - @tailwind base                   │
+│  - @tailwind components             │
+│  - Custom CSS (.cta-banner { ... }) │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+      ┌────────────────────┐
+      │  npm run dev:css   │  ← Tailwind CLI v3
+      │  (Terminal 1)      │
+      └────────────────────┘
+               │
+               ▼
+┌─────────────────────────────────────┐
+│  static/css/main.css                │  ← Generiert (nicht editieren!)
+│  - Kompilierte CSS (~100 KB)        │
+└──────────────┬──────────────────────┘
+               │
+               ▼
+      ┌────────────────────┐
+      │  Hugo lädt direkt  │
+      │  (kein PostCSS!)   │
+      └────────────────────┘
 ```
 
-**b) Padding reduzieren:**
-```css
-.cta-banner {
-  padding: 2rem 2rem;  /* Statt 5rem 2rem */
+**Wichtig:**
+- `assets/css/main.css` = Quelle
+- `static/css/main.css` = Output (automatisch generiert)
+- Hugo lädt CSS aus `static/` (NICHT aus `assets/`!)
+- Kein PostCSS in Hugo nötig!
+
+**package.json Scripts:**
+```json
+{
+  "scripts": {
+    "dev:css": "tailwindcss -i ./assets/css/main.css -o ./static/css/main.css --watch",
+    "build:css": "tailwindcss -i ./assets/css/main.css -o ./static/css/main.css --minify"
+  }
 }
 ```
 
-**Empfehlung:** Standard-Padding für Banners auf `2rem` oder `3rem` setzen.
+---
+
+## Lessons Learned
+
+### 1. Docker ist nicht immer die Lösung
+
+**Ursprünglicher Plan:** Alles in Docker!
+
+**Realität:** Für Build-Tools ist Host besser.
+
+**Erkenntnis:**
+- Docker für **Services** die 24/7 laufen (Nginx, PostgreSQL, Redis)
+- **Nicht** für Tools die 5 Sekunden laufen (Git, Hugo, npm)
+
+**Community-Konsens:** "Native for build, containers for deployment"
 
 ---
 
-### 5. Context-Übergabe inkonsistent
+### 2. Node v25 funktioniert mit Tailwind v3
 
-**Problem:** Manche Partials nutzen `.block` (klein), andere `.Block` (groß).
+**Alte Doku sagte:** "v25+ inkompatibel"
 
-**Beispiele:**
-```html
-{{/* Textblock, FAQ, etc. */}}
-{{ partial "block-textblock.html" (dict "block" . "page" $) }}
+**Test-Ergebnis:** Funktioniert einwandfrei!
 
-{{/* Slider, CTA */}}
-{{ partial "block-slider.html" (dict "Block" . "Page" $) }}
-```
-
-**Lösung:** Im Partial entsprechend anpassen:
-```html
-{{/* Für "block" (klein) */}}
-{{ $block := .block }}
-{{ $page := .page }}
-
-{{/* Für "Block" (groß) */}}
-{{ $block := .Block }}
-{{ $page := .Page }}
-```
-
-**Empfehlung für neue Blöcke:** Immer **Kleinbuchstaben** verwenden (`"block" . "page"`), konsistent mit bestehenden Blöcken.
+**Lesson:** Immer selbst testen, Warnings können veraltet sein.
 
 ---
 
-### 6. Hintergrundfarben im CTA-Block
+### 3. Webhook-Container kann nicht auf Host zugreifen
 
-**Problem:** CTA hatte feste Hintergrundfarbe, alle anderen Blöcke unterstützen `bg: light/white/dark/accent`.
+**Problem:** Container will Script auf Host ausführen, das Host-Tools braucht.
 
-**Lösung:** Wrapper-Pattern wie bei Textblocks:
-```html
-{{ $bg := $block.bg | default "light" }}
+**Lösungsversuche:**
+1. Docker Socket mounten → Security-Risk ❌
+2. Alle Tools im Container → Riesiges Custom Image ❌
+3. Webhook auf Host → Simpel, funktioniert ✅
 
-<div class="section-{{ $bg }}" {{ with $block.id }}id="{{ . }}"{{ end }}>
-  <section class="cta-banner">
-    <!-- Inhalt -->
-  </section>
-  {{ partial "back-to-top.html" . }}
-</div>
-```
-
-**Wichtig:** ID verschiebt sich vom `<section>` zum Wrapper-`<div>`!
+**Erkenntnis:** Nicht alles muss in Docker, nur weil es "modern" ist.
 
 ---
 
-### 7. Warum static/css/main.css und nicht Hugo PostCSS?
+### 4. Hugo ist ein Single Binary
 
-**Frage:** Warum nicht Hugo's `resources.Get | postCSS`?
+**Bedeutung:** Hugo hat NULL Runtime-Dependencies!
 
-**Antwort:** Design-Entscheidung für dieses Setup:
-- **Kein Node auf dem Server** gewünscht
-- **Tailwind CLI separat** = unabhängig von Hugo
-- **Einfacheres Deployment** = nur HTML/CSS/Images syncen
+**Konsequenz:** Kein Grund für Docker-Container. Ein Binary auf Host ist simpler.
 
-**Alternative (mit Hugo PostCSS):**
-```html
-<!-- baseof.html -->
-{{ $styles := resources.Get "css/main.css" | postCSS | minify | fingerprint }}
-<link rel="stylesheet" href="{{ $styles.RelPermalink }}">
-```
-
-**Voraussetzungen:**
-- PostCSS + Plugins installiert (`npm install postcss postcss-cli autoprefixer`)
-- `postcss.config.js` im Root
-- Hugo muss PostCSS binary finden
-
-**Unser Setup:** Simpler und funktioniert zuverlässig ohne Hugo-PostCSS-Integration.
+**Vergleich:**
+- **Node:** Viele Dependencies → Container sinnvoll
+- **Hugo:** Keine Dependencies → Host reicht
 
 ---
 
-### 8. Button-Struktur-Varianten
+### 5. Absolute Pfade in hooks.json sind Pflicht
 
-**Problem:** Manche Blöcke nutzen `button.label`, andere `button_label`.
+**Fehler:** `execute-command: "scripts/deploy.sh"` mit `command-working-directory: "/tmp"`
 
-**Aktuell unterstützt:**
+**Resultat:** Webhook sucht `/tmp/scripts/deploy.sh` ❌
 
-**Neue Struktur (bevorzugt):**
-```yaml
-button:
-  label: "Text"
-  url: "https://..."
-  color: primary
-```
-
-**Alte Struktur (kompatibel):**
-```yaml
-button_label: "Text"
-button_url: "https://..."
-button_color: "primary"
-```
-
-**Partials prüfen beide:**
-```html
-{{ if .button }}
-  <a href="{{ .button.url }}">{{ .button.label }}</a>
-{{ else if .button_label }}
-  <a href="{{ .button_url }}">{{ .button_label }}</a>
-{{ end }}
-```
-
-**Empfehlung:** Neue Kampagnen sollten nested `button:`-Struktur nutzen.
+**Fix:** `execute-command: "/home/user/webhook/scripts/deploy.sh"` ✅
 
 ---
 
-## Für künftige Bugfixes: Debug-Pattern
+### 6. NVM muss explizit geladen werden
 
-### 1. Hugo rendert Block nicht?
-- Prüfe `blocks:`-Liste in `_index.md`
-- Ist `type:` richtig geschrieben?
-- Partial existiert in `layouts/partials/`?
-- Hugo-Terminal: Fehlermeldungen?
+**Problem:** In non-interactive Shell ist NVM nicht verfügbar.
 
-### 2. ID wird nicht gesetzt?
-- Browser DevTools → Elements → Suche `id="xyz"`
-- Falls fehlt: Steht ID im Block (nicht im Daten-Objekt)?
-- Context-Übergabe korrekt? `(dict "Block" . "Page" $)`
-- Partial nutzt `{{ with $block.id }}id="{{ . }}"{{ end }}`?
+**Fix:** `source ~/.nvm/nvm.sh` oder `source /usr/share/nvm/init-nvm.sh`
 
-### 3. CSS-Änderung greift nicht?
-- `npm run dev:css` läuft?
-- Änderung in `assets/css/main.css` (nicht `static/css/main.css`)?
-- Tailwind hat kompiliert ("Done" im Terminal)?
-- Browser Hard-Refresh?
+**Pfad variiert je nach OS:**
+- Arch Linux: `/usr/share/nvm/init-nvm.sh`
+- Ubuntu/Debian: `~/.nvm/nvm.sh`
+- Installiert via curl: `~/.nvm/nvm.sh`
 
-### 4. Neue Block-Typen anlegen?
-- Partial in `layouts/partials/block-xyz.html` erstellen
-- In `layouts/index.html` registrieren:
-  ```html
-  {{ else if eq $type "xyz" }}
-    {{ partial "block-xyz.html" (dict "block" . "page" $) }}
-  ```
-- Context-Pattern von bestehenden Blöcken übernehmen
-- ID-Support einbauen: `{{ with $block.id }}i
+---
+
+### 7. Nginx-Header MÜSSEN weitergeleitet werden
+
+**Problem:** Webhook sagt "parameter node not found: X-Hub-Signature-256"
+
+**Ursache:** Nginx Config vergisst Header weiterzuleiten.
+
+**Fix:**
+```nginx
+proxy_set_header X-Hub-Signature-256 $http_x_hub_signature_256;
+```
+
+**Wichtig:** `$http_` Prefix + Lowercase + Underscores!
+
+---
+
+## Debugging-Strategien
+
+### Ebene 1: Webhook empfängt nichts
+
+**Symptom:** GitHub zeigt "504 Gateway Timeout" oder "Connection refused"
+
+**Checks:**
+```bash
+# 1. Service läuft?
+sudo systemctl status webhook
+
+# 2. Port offen?
+sudo ss -tlnp | grep 9000
+
+# 3. Lokal erreichbar?
+curl http://localhost:9000/hooks/deploy-kampagne
+
+# 4. Nginx leitet weiter?
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+
+# 5. GitHub Delivery Log
+# GitHub → Settings → Webhooks → Recent Deliveries → Response
+```
+
+---
+
+### Ebene 2: Webhook empfängt, aber triggert nicht
+
+**Symptom:** Webhook-Log zeigt Request, aber kein Execution
+
+**Checks:**
+```bash
+# Service-Log ansehen
+sudo journalctl -u webhook -n 50
+
+# Suche nach:
+# - "parameter node not found" → Nginx Header fehlt
+# - "trigger rules were not satisfied" → Secret falsch oder Branch != main
+# - "hook triggered successfully" → Hat funktioniert!
+```
+
+**Debug-Pattern:**
+```bash
+# Temporär Secret-Regel deaktivieren (NUR ZUM TESTEN!)
+# hooks.json: Entferne "and": [...] und behalte nur Branch-Check
+# Dann: Funktioniert es ohne Secret? → Secret-Problem!
+```
+
+---
+
+### Ebene 3: Script läuft nicht
+
+**Symptom:** "error in exec: stat /path: no such file or directory"
+
+**Checks:**
+```bash
+# 1. Datei existiert?
+ls -la ~/webhook/scripts/deploy.sh
+
+# 2. Ausführbar?
+stat ~/webhook/scripts/deploy.sh  # Sollte x-Bit haben
+
+# 3. Pfad absolut?
+grep execute-command ~/webhook/config/hooks.json
+# Sollte zeigen: "/home/user/..."
+
+# 4. Manuell testen
+~/webhook/scripts/deploy.sh
+```
+
+---
+
+### Ebene 4: Script läuft, aber Build fehlschlägt
+
+**Symptom:** Script startet, aber bricht ab
+
+**Checks:**
+```bash
+# Deploy-Log ansehen
+cat ~/webhook/config/deploy.log
+
+# Häufige Fehler:
+# - "nvm: command not found" → NVM-Pfad falsch
+# - "hugo: command not found" → Hugo nicht installiert
+# - "npm ERR!" → package.json Problem oder Node-Version
+# - "fatal: unable to access" → Git-Permissions oder Netzwerk
+# - "Error: EACCES" → Permissions-Problem bei npm
+
+# Manuell durchgehen:
+cd ~/repos/kampagnen-site
+git pull origin main
+source ~/.nvm/nvm.sh
+nvm use 25
+npm install
+npm run build:css
+hugo --minify -d /var/www/kampagnen-site
+```
+
+---
+
+## Sicherheitsüberlegungen
+
+### ✅ Gut implementiert
+
+1. **HMAC SHA256 Secret-Validierung**
+   - GitHub signiert Payload mit Secret
+   - Webhook validiert Signatur
+   - Verhindert unautorisierte Requests
+
+2. **Branch-Whitelist**
+   - Nur `refs/heads/main` triggert Deploy
+   - Verhindert versehentliche Deploys von Feature-Branches
+
+3. **Versteckter URL-Pfad**
+   - `/webhook-a3f9e2c8d1b4f7e6...` schwer zu erraten
+   - Zusätzlicher Schutz neben Secret
+
+4. **Non-Root Execution**
+   - Webhook-Service läuft als normaler User
+   - deploy.sh läuft als normaler User
+   - Begrenzt Schaden bei Kompromittierung
+
+5. **Kein SSH-Key in GitHub**
+   - VPS pullt Code, GitHub pusht nichts
+   - Reduziert Attack Surface
+
+### ⚠️ Potenzielle Risiken
+
+1. **Secret-Leak**
+   - Wer Secret kennt, kann Deploy triggern
+   - **Mitigation:** Secret regelmäßig rotieren
+
+2. **Webhook-URL-Leak**
+   - URL könnte in Logs oder öffentlichen Docs landen
+   - **Mitigation:** URL nicht committen, nur in README.local
+
+3. **Deploy-Script hat volle User-Rechte**
+   - Script kann alles löschen was User darf
+   - **Mitigation:** Separater Deploy-User mit minimalen Rechten
+
+4. **Kein Rollback-Mechanismus**
+   - Fehlerhafte Commits gehen direkt live
+   - **Mitigation:** Git-Tags + manueller Rollback möglich
+
+### 🔐 Best Practices
+
+```bash
+# 1. Secret rotieren (alle 6 Monate)
+openssl rand -hex 32  # Neues Secret
+# → hooks.json updaten
+# → GitHub Webhook updaten
+# → Webhook-Service restart
+
+# 2. Separater Deploy-User (optional, aber empfohlen)
+sudo useradd -m -s /bin/bash deploy
+sudo chown -R deploy:deploy /var/www/kampagnen-site
+# → Webhook-Service User auf "deploy" setzen
+
+# 3. Logs regelmäßig prüfen
+sudo journalctl -u webhook --since "1 week ago" | grep -v "200 OK"
+
+# 4. Rate-Limiting in Nginx (optional)
+limit_req_zone
