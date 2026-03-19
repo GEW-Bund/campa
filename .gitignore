@@ -6,3 +6,7 @@ static/css/main.css
 .DS_Store
 Thumbs.db
 *.swp
+
+# Internal deployment documentation
+DEPLOYMENT.md
+INTERNAL.md
