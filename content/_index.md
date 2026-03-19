@@ -1,6 +1,6 @@
 ---
 title: "Schule zeigt Haltung"
-description: "Lehrkräfte stärken — Demokratie schützen (Schule zeigt Haltung!)."
+description: "Lehrkräfte stärken — Demokratie schützen (Schule zeigt Haltung)."
 kampagne: "kampagne-demo"
 theme_css: "kampagne-demo.css"
 
