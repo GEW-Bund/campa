@@ -1,0 +1,28 @@
+{{ $page := .Page }}
+{{ $block := .Block }}
+
+{{ with $page.Params.slider }}
+<section class="slider-section" {{ with $block.id }}id="{{ . }}"{{ else }}id="bilder"{{ end }}>
+  <div class="slider-eyebrow">
+    {{ with $page.Params.slider_eyebrow }}<span>{{ . }}</span>{{ end }}
+    {{ with .title }}<h2>{{ . }}</h2>{{ end }}
+  </div>
+  <div class="slider-outer">
+    <button class="slider-btn slider-btn-prev" aria-label="Vorheriges Bild">&#8592;</button>
+    <div class="slider-scroll" id="sliderTrack">
+      {{ range .images }}
+      <div class="slide">
+        <img src="{{ .src }}" alt="{{ .alt | default "Bild" }}" loading="lazy" />
+        {{ with .caption }}<p class="slide-caption">{{ . }}</p>{{ end }}
+      </div>
+      {{ end }}
+    </div>
+    <button class="slider-btn slider-btn-next" aria-label="Nächstes Bild">&#8594;</button>
+  </div>
+  <div class="slider-dots" id="sliderDots">
+    {{ range $i, $img := .images }}
+    <button class="slider-dot{{ if eq $i 0 }} active{{ end }}" aria-label="Bild {{ add $i 1 }}"></button>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

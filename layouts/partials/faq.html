@@ -1,0 +1,13 @@
+{{ $kampagne := .Params.kampagne | default "kampagne-demo" }}
+{{ $faq := .Site.GetPage (printf "/kampagnen/%s/faq" $kampagne) }}
+
+{{ with .Params.faq_title }}
+<div class="section-light">
+  <section class="faq-section" id="faq">
+    <h2>{{ . }}</h2>
+    <hr class="section-rule" />
+    <div id="faqContainer"></div>
+    <div id="faqRaw" style="display:none;">{{ $faq.Content }}</div>
+  </section>
+</div>
+{{ end }}

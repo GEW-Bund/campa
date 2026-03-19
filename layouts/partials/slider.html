@@ -1,0 +1,25 @@
+{{ with .Params.slider }}
+<section class="slider-section" id="bilder">
+  <div class="slider-eyebrow">
+    {{ with $.Params.slider_eyebrow }}<span>{{ . }}</span>{{ end }}
+    {{ with .title }}<h2>{{ . }}</h2>{{ end }}
+  </div>
+  <div class="slider-wrapper">
+    <button class="slider-btn prev" onclick="slideMove(-1)" aria-label="Vorheriges Bild">&#8592;</button>
+    <div class="slider-track" id="sliderTrack">
+      {{ range .images }}
+      <div class="slide">
+        <img src="{{ .src }}" alt="{{ .alt | default "Bild" }}" loading="lazy" />
+        {{ with .caption }}<p class="slide-caption">{{ . }}</p>{{ end }}
+      </div>
+      {{ end }}
+    </div>
+    <button class="slider-btn next" onclick="slideMove(1)" aria-label="Nächstes Bild">&#8594;</button>
+  </div>
+  <div class="slider-dots" id="sliderDots">
+    {{ range $i, $img := .images }}
+    <button class="slider-dot{{ if eq $i 0 }} active{{ end }}" onclick="slideTo({{ $i }})" aria-label="Bild {{ add $i 1 }}"></button>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

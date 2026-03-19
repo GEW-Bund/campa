@@ -1,0 +1,11 @@
+baseURL = "https://example.org/"
+languageCode = "de-DE"
+title = "Kampagnen-Site"
+
+[params]
+  description = "Kampagnen-Landingpage"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

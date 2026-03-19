@@ -1,0 +1,38 @@
+{{ define "main" }}
+
+  {{/* HERO — immer fest */}}
+  {{ partial "hero.html" . }}
+
+  {{/* BLÖCKE — flexibel aus _index.md */}}
+  {{ range .Params.blocks }}
+    {{ $type := .type }}
+
+    {{ if eq $type "textblock" }}
+      {{ partial "block-textblock.html" (dict "block" . "page" $) }}
+
+    {{ else if eq $type "slider" }}
+      {{ partial "block-slider.html" (dict "Page" $ "Block" .) }}
+
+    {{ else if eq $type "faq" }}
+      {{ partial "block-faq.html" (dict "block" . "page" $) }}
+
+    {{ else if eq $type "logos" }}
+      {{ partial "block-logos.html" (dict "block" . "page" $) }}
+
+    {{ else if eq $type "accordion" }}
+      {{ partial "block-accordion.html" (dict "block" . "page" $) }}
+
+    {{ else if eq $type "imagetext" }}
+      {{ partial "block-imagetext.html" (dict "block" . "page" $) }}
+
+    {{ else if eq $type "cta" }}
+      {{ partial "block-cta.html" (dict "Page" $ "Block" .) }}
+
+    {{ end }}
+  {{ end }}
+
+{{ end }}
+
+{{ define "scripts" }}
+{{ partial "scripts.html" . }}
+{{ end }}

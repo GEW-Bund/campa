@@ -1,0 +1,37 @@
+/*
+  KAMPAGNEN-THEME: kampagne-demo
+  ================================
+  Nur diese Variablen ändern für ein neues Design.
+  Diese Datei überschreibt die Defaults aus main.css.
+*/
+
+@font-face {
+  font-family: 'Permanent Marker';
+  src: url('/fonts/PermanentMarker-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Anton';
+  src: url('/fonts/Anton-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Liter';
+  src: url('/fonts/Liter-Regular.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  --color-primary:     #5815a0;
+  --color-accent:      #e5e01d;
+  --color-bg:          #f8f7f4; 
+  --color-text:        #1a1a1a;
+  --color-text-light:  #555555;
+  --color-border:      #d0ccc4;
+  --color-link-primary: #7a3fd4;  /* gedämpftes Lila — lesbar auf weiß/grau */
+  --color-link-accent:  #2a1a4a;  /* dunkel — lesbar auf Gelb */
+  --font-heading:      'Permanent Marker', cursive;
+  --font-body:         'Liter', system-ui, sans-serif;
+}

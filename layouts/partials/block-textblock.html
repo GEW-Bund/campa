@@ -1,0 +1,19 @@
+{{ $block := .block }}
+{{ $page  := .page }}
+{{ $kampagne := $page.Params.kampagne | default "kampagne-demo" }}
+{{ $src := $block.src | default "textblock1" }}
+{{ $bg  := $block.bg  | default "light" }}
+{{ $content := $page.Site.GetPage (printf "/kampagnen/%s/%s" $kampagne $src) }}
+
+{{ with $content }}
+<div class="section-{{ $bg }}" id="{{ $src }}">
+  <section class="textblock">
+    <hr class="section-rule" />
+    {{ .Content }}
+    {{ with $block.button }}
+    <a href="{{ .url | default "#" }}" class="btn btn--{{ .color | default "primary" }}">{{ .label }}</a>
+    {{ end }}
+  </section>
+  {{ partial "back-to-top.html" . }}
+</div>
+{{ end }}

@@ -1,0 +1,34 @@
+{{ $page := .Page }}
+{{ $block := .Block }}
+
+{{/* Datenquelle bestimmen */}}
+{{ $cta := $page.Params.cta }}
+{{ if $block.title }}
+  {{ $cta = $block }}
+{{ end }}
+
+{{/* Hintergrundfarbe aus Block lesen */}}
+{{ $bg := $block.bg | default "light" }}
+
+{{ with $cta }}
+<div class="section-{{ $bg }}" {{ with $block.id }}id="{{ . }}"{{ end }}>
+  <section class="cta-banner">
+    <div class="cta-banner-inner">
+      <h2>{{ .title }}</h2>
+      {{ with .text }}<p>{{ . }}</p>{{ end }}
+      
+      {{/* Button */}}
+      {{ if .button }}
+        <a href="{{ .button.url | default "#" }}" class="btn btn--{{ .button.color | default "primary" }}">
+          {{ .button.label }}
+        </a>
+      {{ else if .button_label }}
+        <a href="{{ .button_url | default "#" }}" class="btn btn--{{ .button_color | default "primary" }}">
+          {{ .button_label }}
+        </a>
+      {{ end }}
+    </div>
+  </section>
+  {{ partial "back-to-top.html" . }}
+</div>
+{{ end }}

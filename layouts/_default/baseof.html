@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ .Title }} — {{ .Site.Title }}</title>
+  <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}" />
+
+  <!-- main.css aus static/ (von npm run dev:css generiert) -->
+  <link rel="stylesheet" href="/css/main.css" />
+
+  <!-- Kampagnen-Theme (überschreibt Custom Properties) -->
+  {{ $theme := .Params.theme_css | default (.Site.Home.Params.theme_css) }}
+  {{ with $theme }}
+  <link rel="stylesheet" href="/css/themes/{{ . }}" />
+  {{ end }}
+</head>
+<body>
+  {{ partial "nav.html" . }}
+  <main>{{ block "main" . }}{{ end }}</main>
+  {{ partial "footer.html" . }}
+  {{ block "scripts" . }}{{ end }}
+</body>
+</html>

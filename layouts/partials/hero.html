@@ -1,0 +1,18 @@
+{{ with .Params.hero }}
+<section class="hero">
+  {{ if .image }}
+  <img class="hero-image" src="{{ .image }}" alt="{{ .image_alt | default "Header-Bild" }}" loading="eager" />
+  {{ else }}
+  <div class="hero-placeholder"></div>
+  {{ end }}
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    {{ with .eyebrow }}<span class="hero-eyebrow">{{ . }}</span>{{ end }}
+    {{ with .title }}<h1>{{ . }}</h1>{{ end }}
+    {{ with .text }}<p>{{ . }}</p>{{ end }}
+    {{ with .cta_label }}
+    <a href="{{ $.Params.hero.cta_url | default "#" }}" class="hero-cta">{{ . }}</a>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

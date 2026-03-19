@@ -1,0 +1,45 @@
+{{ define "main" }}
+
+  {{/* HERO */}}
+  {{ partial "hero.html" . }}
+
+  {{/* TEXTBLOCK 1 */}}
+  {{ $tb1 := .Site.GetPage (printf "content/%s/textblock1.md" .File.Dir) }}
+  {{ with $tb1 }}
+  <section class="textblock" id="intro">
+    {{ .Content }}
+  </section>
+  {{ end }}
+
+  {{/* SLIDER */}}
+  {{ partial "slider.html" . }}
+
+  {{/* TEXTBLOCK 2 */}}
+  {{ $tb2 := .Site.GetPage (printf "content/%s/textblock2.md" .File.Dir) }}
+  {{ with $tb2 }}
+  <section class="textblock" id="mehr" style="background:#fff; max-width:100%; padding:4rem 0;">
+    <div style="max-width:800px; margin:0 auto; padding:0 2rem;">
+      {{ .Content }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{/* FAQ */}}
+  {{ partial "faq.html" . }}
+
+  {{/* CTA BANNER */}}
+  {{ with .Params.cta }}
+  <section class="cta-banner" id="mitmachen">
+    <h2>{{ .title }}</h2>
+    {{ with .text }}<p>{{ . }}</p>{{ end }}
+    {{ with .button_label }}
+    <a href="{{ $.Params.cta.button_url | default "#" }}" class="btn-primary">{{ . }}</a>
+    {{ end }}
+  </section>
+  {{ end }}
+
+{{ end }}
+
+{{ define "scripts" }}
+{{ partial "scripts.html" . }}
+{{ end }}

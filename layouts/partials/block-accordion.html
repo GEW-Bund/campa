@@ -1,0 +1,29 @@
+{{ $block := .block }}
+{{ $page  := .page }}
+{{ $kampagne := $page.Params.kampagne | default "kampagne-demo" }}
+{{ $bg := $block.bg | default "light" }}
+
+<div class="section-{{ $bg }}" id="rechtliches">
+  <section class="accordion-section">
+    <hr class="section-rule" />
+    <div class="accordion-list">
+      {{ range $block.items }}
+        {{ $content := $page.Site.GetPage (printf "/kampagnen/%s/%s" $kampagne .src) }}
+        {{ with $content }}
+        <div class="accordion-item">
+          <button class="accordion-trigger" aria-expanded="false">
+            <h4>{{ .Title }}</h4>
+            <span class="accordion-icon">+</span>
+          </button>
+          <div class="accordion-body" hidden>
+            <div class="accordion-inner">
+              {{ .Content }}
+            </div>
+          </div>
+        </div>
+        {{ end }}
+      {{ end }}
+    </div>
+  </section>
+  {{ partial "back-to-top.html" . }}
+</div>

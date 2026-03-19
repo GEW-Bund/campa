@@ -1,0 +1,11 @@
+{
+  "name": "kampagnen-site",
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/main.css -o ./static/css/main.css --minify",
+    "dev:css": "tailwindcss -i ./assets/css/main.css -o ./static/css/main.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

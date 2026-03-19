@@ -1,0 +1,10 @@
+<footer class="site-footer">
+  <div class="site-footer-links">
+    {{ $kampagne := .Site.Home.Params.kampagne | default "" }}
+    {{ range .Site.Home.Params.footer_links }}
+      {{ $url := .url | default (printf "/kampagnen/%s/%s" $kampagne (.label | lower)) }}
+      <a href="{{ $url }}">{{ .label }}</a>
+    {{ end }}
+  </div>
+  <p>{{ with .Site.Home.Params.footer_text }}{{ . }}{{ else }}© {{ now.Year }} {{ .Site.Title }}{{ end }}</p>
+</footer>

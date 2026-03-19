@@ -1,0 +1,23 @@
+{{ $block := .block }}
+{{ $page  := .page }}
+{{ $kampagne := $page.Params.kampagne | default "kampagne-demo" }}
+{{ $bg := $block.bg | default "light" }}
+{{ $content := $page.Site.GetPage (printf "/kampagnen/%s/%s" $kampagne $block.src) }}
+
+<div class="section-{{ $bg }}" id="{{ $block.src }}">
+  <section class="imagetext-section">
+    <div class="imagetext-grid">
+      <div class="imagetext-img">
+        <img src="{{ $block.image }}" alt="{{ $block.image_alt }}" loading="lazy" />
+      </div>
+      <div class="imagetext-content">
+        {{ with $block.title }}<h2>{{ . }}</h2>{{ end }}
+        {{ with $content }}{{ .Content }}{{ end }}
+        {{ with $block.button }}
+        <a href="{{ .url | default "#" }}" class="btn btn--{{ .color | default "primary" }}">{{ .label }}</a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  {{ partial "back-to-top.html" . }}
+</div>

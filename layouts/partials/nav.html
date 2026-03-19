@@ -1,0 +1,22 @@
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <a href="{{ .Params.nav_home | default "/" }}" class="nav-logo">
+      {{ with .Params.logo }}
+      <img src="{{ . }}" alt="Logo" />
+      {{ else }}
+      {{ (.Site.Home.Params.title | default .Site.Title) }}
+      {{ end }}
+    </a>
+
+    <input type="checkbox" id="nav-toggle" class="nav-toggle-input" />
+    <label for="nav-toggle" class="nav-burger" aria-label="Menü öffnen">
+      <span></span><span></span><span></span>
+    </label>
+
+    <div class="nav-links">
+      {{ range .Params.nav_links }}
+      <a href="{{ .url }}">{{ .label }}</a>
+      {{ end }}
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,22 @@
+{{ $block := .block }}
+{{ $page  := .page }}
+{{ $kampagne := $page.Params.kampagne | default "kampagne-demo" }}
+{{ $src   := $block.src   | default "faq" }}
+{{ $title := $block.title | default "Häufige Fragen" }}
+{{ $bg    := $block.bg    | default "light" }}
+{{ $id    := $block.id    | default "faq" }}
+{{ $faq   := $page.Site.GetPage (printf "/kampagnen/%s/%s" $kampagne $src) }}
+
+{{ with $faq }}
+<div class="section-{{ $bg }}" id="{{ $id }}">
+  <section class="faq-section">
+    <h2>{{ $title }}</h2>
+    <hr class="section-rule" />
+    <div class="faq-container" data-faq-id="{{ $id }}"></div>
+    <div class="faq-raw" data-faq-target="{{ $id }}" style="display:none;">
+      {{ .Content }}
+    </div>
+  </section>
+  {{ partial "back-to-top.html" . }}
+</div>
+{{ end }}
