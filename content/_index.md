@@ -16,7 +16,7 @@ nav_links:
 
 hero:
   eyebrow: "Mythos Neutralität"
-  title: "Schule ist nicht neutral!"
+  title: "Schule ist nicht neutral"
   image: "/images/kampagne-demo/header.jpg"
   image_alt: "Header Bild"
   text: "Schulen sind keine neutralen Räume gegenüber Demokratie- und Menschenfeindlichkeit. Sie haben den Auftrag, junge Menschen auf dem Weg zur Mündigkeit zu begleiten und sie gegen Hass, Ausgrenzung und antidemokratische Tendenzen zu stärken. Demokratie muss an Schulen gelebt und geschützt werden. Sie braucht Haltung – Neutralität ist keine Option!"
