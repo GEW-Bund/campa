@@ -2,7 +2,7 @@
 {{ $page  := .page }}
 {{ $kampagne := $page.Params.kampagne | default "kampagne-demo" }}
 {{ $bg := $block.bg | default "light" }}
-{{ $content := $page.Site.GetPage (printf "/kampagnen/%s/%s" $kampagne $block.src) }}
+{{ $content := $page.Site.GetPage (printf "/%s/%s" $kampagne $block.src) }}
 
 <div class="section-{{ $bg }}" id="{{ $block.src }}">
   <section class="imagetext-section">
