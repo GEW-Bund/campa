@@ -102,7 +102,8 @@ blocks:
       - src: "/schule-zeigt-haltung/t4f.webp"
         alt: "Teachers for Futures"
       - src: "/schule-zeigt-haltung/greenpeace.webp"
-        alt: "Greenpeace"   
+        alt: "Greenpeace"
+    text: "Test"    
   - type: accordion
     title: "Rechtliches"
     id: rechtliches
