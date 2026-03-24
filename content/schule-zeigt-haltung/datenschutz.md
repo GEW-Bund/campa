@@ -4,12 +4,12 @@ title: "Datenschutzerklärung"
 
 *Stand: März 2026*
 
-### I. Datenschutzinformation
-Allgemeine Hinweise zum Datenschutz finden Sie auf [www.gew.de/datenschutz](https://www.gew.de/datenschutz).
+## I. Datenschutzinformation
+Allgemeine Hinweise zum Datenschutz finden Sie auf [www.gew.de/datenschutz](https://www.gew.de/datenschutz)
 
-### II. Datenschutzerklärung für schule‑zeigt‑haltung.org
+## II. Datenschutzerklärung für schule‑zeigt‑haltung.org
 
-#### Präambel
+### Präambel
 Der Schutz Ihrer Daten ist uns sehr wichtig. Daher möchten wir Sie nachfolgend informieren, welche Daten wir zu welchen Zwecken verwenden. Die Verantwortliche im Sinne der Datenschutz-Grundverordnung und anderer nationaler Datenschutzgesetze der Mitgliedsstaaten sowie sonstiger datenschutzrechtlicher Bestimmungen ist die:
 
 Gewerkschaft Erziehung und Wissenschaft (GEW)
@@ -20,21 +20,21 @@ Fax: 069/78973-201
 Die Datenschutzbeauftragte des Verantwortlichen ist:
 Frau Petra Eul-Löh
 HEC Harald Eul Consulting GmbH
-E-Mail: [mailto:dsb-gew-hv@he-c.de](dsb-gew-hv[at]he-c.de)
+E-Mail: [dsb-gew-hv@he-c.de](mailto:dsb-gew-hv@he-c.de)
 
-#### Was sind personenbezogene Daten?
+### Was sind personenbezogene Daten?
 Personenbezogene Daten sind Informationen, mit deren Hilfe eine Person bestimmbar ist, also Angaben, die zurück zu einer Person verfolgt werden können. Dazu gehören der Name, die Emailadresse oder die Telefonnummer. Aber auch Daten über Vorlieben, Hobbies, Mitgliedschaften oder welche Webseiten von jemandem angesehen wurden zählen zu personenbezogenen Daten.
 
-#### Welche Daten erhebt die GEW?
+### Welche Daten erhebt die GEW?
 Wir erheben und verwenden personenbezogene Daten unserer Nutzer und Mitglieder grundsätzlich nur, soweit dies zur Bereitstellung einer funktionsfähigen Website sowie zur Verfügungstellung unserer Inhalte und Leistungen erforderlich ist. Personenbezogene Daten werden von dem Anbieter nur dann erhoben, genutzt und weiter gegeben, wenn dies gesetzlich erlaubt ist oder die Nutzer in die Datenerhebung einwilligen. Eine Ausnahme gilt in solchen Fällen, in denen eine vorherige Einholung einer Einwilligung aus tatsächlichen Gründen nicht möglich ist und die Verarbeitung der Daten durch gesetzliche Vorschriften gestattet ist.
 
-#### Rechtsgrundlage für die Verarbeitung personenbezogener Daten
+### Rechtsgrundlage für die Verarbeitung personenbezogener Daten
 Soweit wir für Verarbeitungsvorgänge personenbezogener Daten eine Einwilligung der betroffenen Person einholen, dient Art. 6 Abs. 1 lit. a EU-Datenschutzgrundverordnung (DSGVO) als Rechtsgrundlage für die Verarbeitung personenbezogener Daten. Bei der Verarbeitung von personenbezogenen Daten, die zur Erfüllung eines Vertrages, dessen Vertragspartei die betroffene Person ist, erforderlich ist, dient Art. 6 Abs. 1 lit. b DSGVO als Rechtsgrundlage. Dies gilt auch für Verarbeitungsvorgänge, die zur Durchführung vorvertraglicher Maßnahmen erforderlich sind. Soweit eine Verarbeitung personenbezogener Daten zur Erfüllung einer rechtlichen Verpflichtung erforderlich ist, der unser Unternehmen unterliegt, dient Art. 6 Abs. 1 lit. c DSGVO als Rechtsgrundlage. Für den Fall, dass lebenswichtige Interessen der betroffenen Person oder einer anderen natürlichen Person eine Verarbeitung personenbezogener Daten erforderlich machen, dient Art. 6 Abs. 1 lit. d DSGVO als Rechtsgrundlage. Ist die Verarbeitung zur Wahrung eines berechtigten Interesses unseres Unternehmens oder eines Dritten erforderlich und überwiegen die Interessen, Grundrechte und Grundfreiheiten des Betroffenen das erstgenannte Interesse nicht, so dient Art. 6 Abs. 1 lit. f DSGVO als Rechtsgrundlage für die Verarbeitung.
 
-#### Löschen oder Sperren von Daten
+### Löschen oder Sperren von Daten
 Die personenbezogenen Daten der betroffenen Person werden gelöscht oder gesperrt, sobald der Zweck der Speicherung entfällt. Eine Speicherung kann darüber hinaus dann erfolgen, wenn dies durch den europäischen oder nationalen Gesetzgeber in unionsrechtlichen Verordnungen, Gesetzen oder sonstigen Vorschriften, denen der Verantwortliche unterliegt, vorgesehen wurde. Eine Sperrung oder Löschung der Daten erfolgt auch dann, wenn eine durch die genannten Normen vorgeschriebene Speicherfrist abläuft, es sei denn, dass eine Erforderlichkeit zur weiteren Speicherung der Daten für einen Vertragsabschluss oder eine Vertragserfüllung besteht.
 
-#### Bereitstellung der Webseite und Erstellung von Logfiles
+### Bereitstellung der Webseite und Erstellung von Logfiles
 
 Bei jedem Aufruf unserer Internetseite erfasst unser System automatisiert Daten und Informationen vom Computersystem des aufrufenden Computers.
 
@@ -56,11 +56,11 @@ Die Erfassung der Daten zur Bereitstellung der Website und die Speicherung der D
 
 Rechtsgrundlage für die vorübergehende Speicherung der Daten und der Logfiles ist Art.6 Abs. 1 lit.f DSGVO.
 
-#### Sicherheit  
+### Sicherheit  
 
 Alle Datenübertragungen zwischen Ihrem Endgerät und unserer Website erfolgen verschlüsselt über **HTTPS (TLS 1.2/1.3)**. Darüber hinaus setzen wir serverseitige Sicherheitsmechanismen ein, um unbefugte Zugriffe zu erkennen und zu verhindern.  
 
-####  Rechte der betroffenen Personen  
+###  Rechte der betroffenen Personen  
 
 Sie haben das Recht:  
 
@@ -75,10 +75,10 @@ Der Widerruf Ihrer Einwilligung zur Nutzung von Analyse‑Cookies ist jederzeit 
 
 Zur Ausübung Ihrer Rechte wenden Sie sich bitte an den Datenschutzbeauftragten (siehe § 2).  
 
-#### Kontaktaufnahme  
+### Kontaktaufnahme  
 
 Da das bisherige Kontaktformular deaktiviert ist, können Sie uns über die E‑Mail‑Adresse **info@gew.de** erreichen. Ihre dort übermittelten Daten werden ausschließlich zum Zweck der Bearbeitung Ihrer Anfrage verarbeitet und unterliegen den in dieser Erklärung genannten Regelungen.  
 
-#### Änderungen dieser Erklärung  
+### Änderungen dieser Erklärung  
 
 Wir behalten uns vor, die Datenschutzerklärung zu aktualisieren. Jede neue Fassung wird auf dieser Seite veröffentlicht und das jeweilige Datum angepasst, sodass Sie jederzeit nachvollziehen können, welche Version aktuell gilt.  
