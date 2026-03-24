@@ -14,7 +14,7 @@
         {{ with $block.title }}<h2>{{ . }}</h2>{{ end }}
         {{ with $content }}{{ .Content }}{{ end }}
         {{ with $block.button }}
-        <a href="{{ .url | default "#" }}" class="btn btn--{{ .color | default "primary" }}">{{ .label }}</a>
+          {{ partial "button.html" . }}
         {{ end }}
       </div>
     </div>

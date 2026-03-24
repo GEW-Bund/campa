@@ -24,5 +24,10 @@
     <button class="slider-dot{{ if eq $i 0 }} active{{ end }}" aria-label="Bild {{ add $i 1 }}"></button>
     {{ end }}
   </div>
+  {{ with $block.button }}
+    <div style="text-align: center; margin-top: 2rem;">
+      {{ partial "button.html" . }}
+    </div>
+  {{ end }}
 </section>
 {{ end }}

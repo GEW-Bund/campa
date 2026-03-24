@@ -1,0 +1,12 @@
+{{/* Shared Button Partial
+     Usage: {{ partial "button.html" .button }}
+     Expected params: url, label, target (optional), color (optional)
+*/}}
+{{ $button := . }}
+{{ with $button }}
+<a href="{{ .url | default "#" }}" 
+   target="{{ .target | default "_self" }}" 
+   class="btn btn--{{ .color | default "primary" }}">
+  {{ .label }}
+</a>
+{{ end }}

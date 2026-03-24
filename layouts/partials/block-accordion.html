@@ -24,6 +24,9 @@
         {{ end }}
       {{ end }}
     </div>
+    {{ with $block.button }}
+      {{ partial "button.html" . }}
+    {{ end }}
   </section>
   {{ partial "back-to-top.html" . }}
 </div>

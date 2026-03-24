@@ -10,6 +10,9 @@
       <img src="{{ .src }}" alt="{{ .alt }}" class="logo-item" loading="lazy" />
       {{ end }}
     </div>
+    {{ with $block.button }}
+      {{ partial "button.html" . }}
+    {{ end }}
   </section>
   {{ partial "back-to-top.html" . }}
 </div>

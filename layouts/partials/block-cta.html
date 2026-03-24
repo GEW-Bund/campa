@@ -17,15 +17,12 @@
       <h2>{{ .title }}</h2>
       {{ with .text }}<p>{{ . }}</p>{{ end }}
       
-      {{/* Button */}}
+      {{/* Button - new format */}}
       {{ if .button }}
-        <a href="{{ .button.url | default "#" }}" class="btn btn--{{ .button.color | default "primary" }}">
-          {{ .button.label }}
-        </a>
+        {{ partial "button.html" .button }}
+      {{/* Legacy format support */}}
       {{ else if .button_label }}
-        <a href="{{ .button_url | default "#" }}" class="btn btn--{{ .button_color | default "primary" }}">
-          {{ .button_label }}
-        </a>
+        {{ partial "button.html" (dict "url" (.button_url | default "#") "label" .button_label "color" (.button_color | default "primary") "target" (.button_target | default "_self")) }}
       {{ end }}
     </div>
   </section>

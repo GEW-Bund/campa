@@ -16,6 +16,9 @@
     <div class="faq-raw" data-faq-target="{{ $id }}" style="display:none;">
       {{ .Content }}
     </div>
+    {{ with $block.button }}
+      {{ partial "button.html" . }}
+    {{ end }}
   </section>
   {{ partial "back-to-top.html" . }}
 </div>

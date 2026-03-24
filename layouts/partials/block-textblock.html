@@ -11,7 +11,7 @@
     <hr class="section-rule" />
     {{ .Content }}
     {{ with $block.button }}
-    <a href="{{ .url | default "#" }}" class="btn btn--{{ .color | default "primary" }}">{{ .label }}</a>
+      {{ partial "button.html" . }}
     {{ end }}
   </section>
   {{ partial "back-to-top.html" . }}

@@ -11,7 +11,9 @@
     {{ with .title }}<h1>{{ . }}</h1>{{ end }}
     {{ with .text }}<p>{{ . }}</p>{{ end }}
     {{ with .cta_label }}
-    <a href="{{ $.Params.hero.cta_url | default "#" }}" class="hero-cta">{{ . }}</a>
+    <a href="{{ $.Params.hero.cta_url | default "#" }}" 
+       target="{{ $.Params.hero.cta_target | default "_self" }}" 
+       class="hero-cta">{{ . }}</a>
     {{ end }}
   </div>
 </section>
