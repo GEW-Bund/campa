@@ -3,16 +3,16 @@ title: "Impressum"
 ---
 Angaben gemäß § 5 TMG und § 18 Abs. 2 MStV
 
-**Gewerkschaft Erziehung und Wissenschaft (GEW)**<br>
-Hauptvorstand<br>
-Reifenberger Str. 21<br>
+**Gewerkschaft Erziehung und Wissenschaft (GEW)**
+Hauptvorstand
+Reifenberger Str. 21
 60489 Frankfurt am Main​
 Web: [https://www.gew.de​](https://www.gew.de)
 
 ### Vertretungsberechtigung
 Die GEW wird vertreten durch den Hauptvorstand.​
 
-Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV (ViSdP)
+Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV (ViSdP):
 Ulf Rödde
 Gewerkschaft Erziehung und Wissenschaft, Hauptvorstand
 Reifenberger Str. 21
@@ -21,7 +21,7 @@ Reifenberger Str. 21
 ### Verantwortlich für diese Website
 Gewerkschaft Erziehung und Wissenschaft (GEW), Hauptvorstand
 Verantwortlich: Ulf Rödde
-Webseite Programmierung/Design: Stefan Weitzel
+Programmierung/Design: Stefan Weitzel
 Reifenberger Str. 21
 60489 Frankfurt am Main​
 
