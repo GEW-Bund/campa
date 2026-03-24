@@ -68,7 +68,7 @@ GitHub Push (main)
 Server: Webhook-Service
     ↓ triggert
 deploy.sh:
-  - git pull
+  - git fetch + reset (force update)
   - npm run build:css (Tailwind)
   - hugo --minify
     ↓
