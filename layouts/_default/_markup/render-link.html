@@ -1,4 +1,7 @@
-<a href="{{ .Destination }}"
-  {{- with .Title }} title="{{ . }}"{{ end }}
-  {{- if strings.HasPrefix .Destination "http" }} target="_blank" rel="noopener noreferrer"{{ end }}
->{{ .Text | safeHTML }}</a>
+{{- $isExternal := or (hasPrefix .Destination "http://") (hasPrefix .Destination "https://") -}}
+{{- $isMailto := hasPrefix .Destination "mailto:" -}}
+<a href="{{ .Destination | safeURL }}"
+   {{- if or $isExternal $isMailto }} target="_blank" rel="noopener noreferrer"{{ end -}}
+   {{- with .Title }} title="{{ . }}"{{ end -}}>
+  {{- .Text | safeHTML -}}
+</a>
