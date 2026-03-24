@@ -90,7 +90,7 @@ blocks:
       url: "mailto:schule-zeigt-haltung@gew.de"
       color: primary
   - type: logos
-    title: "Das Bündnis „Schule zeigt Haltung""
+    title: 'Das Bündnis "Schule zeigt Haltung"'
     bg: white
     items:
       - src: "/schule-zeigt-haltung/bsk.webp"
