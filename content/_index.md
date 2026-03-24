@@ -92,6 +92,7 @@ blocks:
   - type: logos
     title: 'Das Bündnis "Schule zeigt Haltung"'
     bg: white
+    text: "Gemeinsam setzen wir uns für demokratische Bildung ein. Diese Organisationen unterstützen die Kampagne: Bundesschülerkonferenz, Deutsche Vereinigung für politische Bildung, Gewerkschaft Erziehung und Wissenschaft, TeachersforFuture, Greenpeace."
     items:
       - src: "/schule-zeigt-haltung/bsk.webp"
         alt: "BSK"
@@ -102,8 +103,7 @@ blocks:
       - src: "/schule-zeigt-haltung/t4f.webp"
         alt: "Teachers for Futures"
       - src: "/schule-zeigt-haltung/greenpeace.webp"
-        alt: "Greenpeace"
-    text: "Test"    
+        alt: "Greenpeace"       
   - type: accordion
     title: "Rechtliches"
     id: rechtliches
