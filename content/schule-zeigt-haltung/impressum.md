@@ -3,7 +3,7 @@ title: "Impressum"
 ---
 Angaben gemäß § 5 TMG und § 18 Abs. 2 MStV
 
-Gewerkschaft Erziehung und Wissenschaft (GEW)
+**Gewerkschaft Erziehung und Wissenschaft (GEW)**
 Hauptvorstand
 Reifenberger Str. 21
 60489 Frankfurt am Main​
