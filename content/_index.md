@@ -1,8 +1,8 @@
 ---
 title: "Schule zeigt Haltung"
 description: "Lehrkräfte stärken — Demokratie schützen (Schule zeigt Haltung!)."
-kampagne: "kampagne-demo"
-theme_css: "kampagne-demo.css"
+kampagne: "schule-zeigt-haltung"
+theme_css: "schule-zeigt-haltung.css"
 
 nav_links:
   - label: "Petition"
@@ -17,7 +17,7 @@ nav_links:
 hero:
   eyebrow: "Mythos Neutralität"
   title: "Schule ist nicht neutral"
-  image: "/images/kampagne-demo/header.jpg"
+  image: "/schule-zeigt-haltung/header.jpg"
   image_alt: "Header Bild"
   text: "Schulen sind keine neutralen Räume gegenüber Demokratie- und Menschenfeindlichkeit. Sie haben den Auftrag, junge Menschen auf dem Weg zur Mündigkeit zu begleiten und sie gegen Hass, Ausgrenzung und antidemokratische Tendenzen zu stärken. Demokratie muss an Schulen gelebt und geschützt werden. Sie braucht Haltung – Neutralität ist keine Option!"
   cta_label: "Petition unterzeichnen"
@@ -27,16 +27,16 @@ hero:
 slider:
   title: "Die Petition"  
   images:
-    - src: "/images/kampagne-demo/slide1.jpg"
+    - src: "/schule-zeigt-haltung/slide1.jpg"
       alt: "Lehrkräfte brauchen jetzt Rückstärkung!"
       caption: "Lehrkräfte brauchen jetzt Rückstärkung!"
-    - src: "/images/kampagne-demo/slide2.jpg"
+    - src: "/schule-zeigt-haltung/slide2.jpg"
       alt: "Bild 2"
       caption: "Gemeinsam Rückendeckung einfordern!"
-    - src: "/images/kampagne-demo/slide3.jpg"
+    - src: "/schule-zeigt-haltung/slide3.jpg"
       alt: "Bild 3"
       caption: "Die Forderungen der Petition"
-    - src: "/images/kampagne-demo/slide4.jpg"
+    - src: "/schule-zeigt-haltung/slide4.jpg"
       alt: "Bild 4"
       caption: "Werde aktiv!"
 
@@ -68,7 +68,7 @@ blocks:
     id: broschuere
     src: broschuere
     bg: white
-    image: "/images/kampagne-demo/broschuere.webp"
+    image: "/schule-zeigt-haltung/broschuere.webp"
     image_alt: "Broschüre „Mythos Neutralität"
     button:
       label: "Herunterladen"
@@ -82,7 +82,7 @@ blocks:
     bg: light
   - type: imagetext
     bg: white
-    image: "/images/kampagne-demo/broschuere.webp"
+    image: "/schule-zeigt-haltung/broschuere.webp"
     image_alt: "Bildbeschreibung"    
     src: kontakt
     button:
@@ -90,18 +90,18 @@ blocks:
       url: "mailto:schule-zeigt-haltung@gew.de"
       color: primary
   - type: logos
-    title: "Das Bündnis „Schule zeigt Haltung“"
+    title: "Das Bündnis „Schule zeigt Haltung""
     bg: white
     items:
-      - src: "/images/kampagne-demo/bsk.webp"
+      - src: "/schule-zeigt-haltung/bsk.webp"
         alt: "BSK"
-      - src: "/images/kampagne-demo/dvpb.webp"
+      - src: "/schule-zeigt-haltung/dvpb.webp"
         alt: "DVP"
-      - src: "/images/kampagne-demo/gew.webp"
+      - src: "/schule-zeigt-haltung/gew.webp"
         alt: "GEW"
-      - src: "/images/kampagne-demo/t4f.webp"
+      - src: "/schule-zeigt-haltung/t4f.webp"
         alt: "Teachers for Futures"
-      - src: "/images/kampagne-demo/greenpeace.webp"
+      - src: "/schule-zeigt-haltung/greenpeace.webp"
         alt: "Greenpeace"   
   - type: accordion
     title: "Rechtliches"
