@@ -22,6 +22,7 @@ hero:
   text: "Schulen sind keine neutralen Räume gegenüber Demokratie- und Menschenfeindlichkeit. Sie haben den Auftrag, junge Menschen auf dem Weg zur Mündigkeit zu begleiten und sie gegen Hass, Ausgrenzung und antidemokratische Tendenzen zu stärken. Demokratie muss an Schulen gelebt und geschützt werden. Sie braucht Haltung – Neutralität ist keine Option!"
   cta_label: "Petition unterzeichnen"
   cta_url: "https://weact.campact.de/petitions/schule-zeigt-haltung-lehrkrafte-starken-gegen-hass-und-hetze"
+  cta_target: "_blank"
 
 slider:
   title: "Die Petition"  
@@ -54,6 +55,7 @@ blocks:
     button:
       label: "Zur Petition"
       url: "https://weact.campact.de/petitions/schule-zeigt-haltung-lehrkrafte-starken-gegen-hass-und-hetze"
+      target: "_blank"
       color: primary
   - type: textblock
     src: unterstuetzung
@@ -71,6 +73,7 @@ blocks:
     button:
       label: "Herunterladen"
       url: "https://www.gew.de/index.php?eID=dumpFile&t=f&f=162223&token=4472de4eeedee014ac7b70d702157d83a79d8012&sdownload=&n=MythosNeutralitaet-SHZ-web.pdf"
+      target: "_blank"
       color: primary
   - type: faq
     id: literatur
