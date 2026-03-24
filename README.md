@@ -1,295 +1,104 @@
-# Campa — Modulares Kampagnen-Landingpage-System
+# Campa — Kampagnen-Landingpage "Schule zeigt Haltung"
 
-> Static Site Generator für politische Kampagnen. Gebaut mit Hugo + Tailwind CSS.
-
----
-
-## Für Redakteure: Inhalte bearbeiten
-
-### Text ändern
-
-1. Öffne das Repo auf [github.com](https://github.com)
-2. Navigiere zu `content/kampagnen/deine-kampagne/`
-3. Klicke auf die gewünschte Datei (z.B. `textblock1.md`)
-4. Klicke auf den **Bleistift** oben rechts (Edit this file)
-5. Ändere den Text
-6. **Commit changes** → Commit bestätigen
-7. **Fertig** — die Seite wird automatisch aktualisiert (~15 Sekunden)
-
-### Diese Dateien kannst du bearbeiten:
-
-| Datei | Inhalt |
-|-------|--------|
-| `_index.md` | Haupt-Konfiguration (Hero, Navigation, Blocks) |
-| `textblock1.md` | Textblock-Inhalte |
-| `faq.md` | FAQ — jede `###`-Überschrift wird ein Aufklappelement |
-| `impressum.md` | Impressum |
-| `datenschutz.md` | Datenschutzerklärung |
-
-### Bilder austauschen
-
-1. Benenne das neue Bild **exakt wie das alte** (z.B. `slide1.jpg`)
-2. Navigiere zu `static/images/deine-kampagne/`
-3. Klicke auf **Add file** → **Upload files**
-4. Lade das neue Bild hoch (GitHub überschreibt automatisch)
-5. **Commit** → fertig
-
-### FAQ-Einträge bearbeiten
-
-In `faq.md` erzeugt jede `###`-Überschrift ein Aufklappelement:
-
-```markdown
-### Meine Frage hier?
-Die Antwort kommt direkt darunter als normaler Text.
-
-### Nächste Frage?
-Nächste Antwort.
-```
+> Hugo-basierte Landingpage für die GEW-Kampagne "Schule zeigt Haltung"  
+> Statische Website mit modularem Block-System
 
 ---
 
-## Für Entwickler: Stack & Architektur
+## 🎯 Was ist das?
 
-### Stack
+**Campa** ist ein Static Site Generator für politische Kampagnen-Landingpages.
 
-| Komponente | Technologie |
-|------------|-------------|
-| Static Site Generator | Hugo (Extended) |
-| CSS Framework | Tailwind CSS v3 (CLI) |
-| Fonts | Lokal gehostet (DSGVO) |
-| Deployment | GitHub Webhook → Host Script |
-| Node.js | v20+ (für CSS Build) |
-
-### Deployment-Architektur (High-Level)
-
-```
-GitHub Push (main)
-    ↓ Webhook (HTTPS POST)
-Server: Webhook-Service
-    ↓ triggert
-deploy.sh:
-  - git fetch + reset (force update)
-  - npm run build:css (Tailwind)
-  - hugo --minify
-    ↓
-Web-Server liefert Static Files
-```
-
-**Für Details zum Server-Setup:** Siehe `DEPLOYMENT.md` (wird lokal vorgehalten, nicht im Repo)
+- **Technologie:** Hugo + Tailwind CSS
+- **Bearbeitung:** Direkt auf GitHub.com (Web-Editor)
+- **Deployment:** Automatisch bei Änderungen (~15 Sekunden)
 
 ---
 
-## Lokale Entwicklung
+## 📱 Für Redakteure: Inhalte bearbeiten
 
-### Voraussetzungen
+### Schnellanleitung
 
-- Node.js v20+ (v25 funktioniert einwandfrei!)
-- Hugo Extended
-- NVM (empfohlen)
+1. Öffne [github.com/GEW-Bund/campa](https://github.com/GEW-Bund/campa)
+2. Navigiere zu `content/_index.md` oder `content/schule-zeigt-haltung/*.md`
+3. Klicke auf **Bleistift-Symbol** (Edit this file)
+4. Ändere den Text
+5. **Commit changes** → Fertig!
 
-### Setup
+Die Website wird automatisch aktualisiert.
+
+### Die wichtigsten Dateien
+
+| Datei | Zweck |
+|-------|-------|
+| `content/_index.md` | Hauptkonfiguration (Hero, Navigation, Blöcke) |
+| `content/schule-zeigt-haltung/*.md` | Textblöcke (Impressum, FAQ, etc.) |
+| `static/schule-zeigt-haltung/*.jpg` | Bilder |
+| `static/css/themes/schule-zeigt-haltung.css` | Theme-Farben |
+
+**📖 Ausführliche Anleitung:** [DETAILS.md](DETAILS.md)
+
+---
+
+## 💻 Für Entwickler: Lokale Entwicklung
+
+### Quick Start
 
 ```bash
-# Node-Version aktivieren (falls NVM installiert)
-nvm use 25  # Oder 20, 22 - alle funktionieren!
+# 1. Repository klonen
+git clone https://github.com/GEW-Bund/campa.git
+cd campa
 
-# Abhängigkeiten installieren
+# 2. Dependencies installieren
 npm install
 
-# Terminal 1: Tailwind watch
-npm run dev:css
-
-# Terminal 2: Hugo dev server
-hugo server
+# 3. Dev-Server starten (2 Terminals)
+npm run dev:css    # Terminal 1: Tailwind CSS Watch
+hugo server        # Terminal 2: Hugo Dev Server
 ```
 
 **Öffne:** http://localhost:1313
 
----
+### Prerequisites
 
-## Kampagne konfigurieren
+- Node.js v20+ (v25 empfohlen)
+- Hugo Extended v0.100+
+- NVM (optional)
 
-Die gesamte Kampagne wird über **eine Datei** gesteuert: `content/_index.md`
-
-### Minimalbeispiel
-
-```yaml
----
-title: "Meine Kampagne"
-description: "Kurzbeschreibung"
-kampagne: "meine-kampagne"
-theme_css: "meine-kampagne.css"
-
-nav_links:
-  - label: "Über uns"
-    url: "#intro"
-
-hero:
-  title: "Hauptüberschrift"
-  image: "/images/meine-kampagne/header.jpg"
-  text: "Beschreibung"
-  cta_label: "Jetzt mitmachen"
-  cta_url: "https://example.com"
-
-blocks:
-  - type: textblock
-    src: intro
-    bg: light
-    id: intro
-
-  - type: cta
-    id: kontakt
-    title: "Kontaktiere uns"
-    button:
-      label: "E-Mail schreiben"
-      url: "mailto:info@example.com"
----
-```
-
-### Verfügbare Block-Typen
-
-| Block-Typ | Parameter | Beschreibung |
-|-----------|-----------|------------|
-| `textblock` | `src`, `bg`, `id` | Markdown-Textblock |
-| `slider` | `id` | Bildslider (Bilder aus `slider.images`) |
-| `faq` | `src`, `title`, `bg`, `id` | FAQ (H3 = Frage) |
-| `cta` | `id`, `bg`, `title`, `text`, `button` | Call-to-Action Banner |
-| `logos` | `title`, `bg`, `items` | Logo-Leiste |
-| `imagetext` | `src`, `image`, `bg`, `id`, `button` | Bild + Text nebeneinander |
-| `accordion` | `title`, `bg`, `items` | Aufklapp-Elemente |
-
-### Anker-Links für Navigation
-
-**IDs müssen im `blocks:`-Array stehen:**
-
-```yaml
-# ✅ RICHTIG
-nav_links:
-  - label: "FAQ"
-    url: "#faq"
-
-blocks:
-  - type: faq
-    id: faq  # ← Erzeugt <section id="faq">
-```
+**📖 Technische Details:** [DEVELOPMENT.md](DEVELOPMENT.md)
 
 ---
 
-## Theme anpassen
+## 📚 Dokumentation
 
-Erstelle eine CSS-Datei: `static/css/themes/meine-kampagne.css`
-
-```css
-:root {
-  --color-primary:     #1a3a5c;   /* Hauptfarbe */
-  --color-accent:      #e63946;   /* Akzentfarbe */
-  --color-bg:          #f8f7f4;   /* Hintergrund */
-  --color-text:        #1a1a1a;   /* Text */
-  --color-text-light:  #555555;   /* Sekundärtext */
-  --color-border:      #d0ccc4;   /* Linien */
-  --font-heading:      'Georgia', serif;
-  --font-body:         system-ui, sans-serif;
-}
-```
-
-In `content/_index.md`:
-```yaml
-theme_css: "meine-kampagne.css"
-```
+| Datei | Für wen? | Inhalt |
+|-------|----------|--------|
+| **[DETAILS.md](DETAILS.md)** | Redakteure | Ausführliche Bearbeitungs-Anleitung |
+| **[DEVELOPMENT.md](DEVELOPMENT.md)** | Entwickler | Setup, Architektur, Troubleshooting |
+| **[LLM.md](LLM.md)** | AI/LLMs | Vollständige technische Dokumentation |
 
 ---
 
-## Projektstruktur
+## 🏗️ Struktur (Überblick)
 
 ```
 campa/
-├── assets/css/main.css            ← Tailwind-Quelle
-├── static/
-│   ├── css/
-│   │   ├── main.css               ← Generiert (von npm run build:css)
-│   │   └── themes/                ← Kampagnen-spezifische CSS
-│   ├── fonts/                     ← Lokale Fonts
-│   └── images/                    ← Kampagnen-Bilder
-├── layouts/
-│   ├── _default/baseof.html       ← HTML-Grundgerüst
-│   ├── index.html                 ← Block-System
-│   └── partials/                  ← Block-Templates
 ├── content/
-│   ├── _index.md                  ← HAUPT-KONFIGURATION
-│   └── kampagnen/*/               ← Markdown-Inhalte
-├── hugo.toml
-├── tailwind.config.js
-└── package.json
+│   ├── _index.md                      # Hauptkonfiguration
+│   └── schule-zeigt-haltung/          # Markdown-Inhalte
+├── static/
+│   ├── schule-zeigt-haltung/          # Bilder
+│   └── css/themes/                    # Theme-CSS
+├── layouts/                           # Hugo-Templates
+└── assets/css/                        # Tailwind-Quelle
 ```
 
 ---
 
-## Troubleshooting
-
-### CSS-Änderungen greifen nicht
-```bash
-# Läuft Tailwind-Watch?
-npm run dev:css
-
-# CSS-Datei existiert?
-ls -la static/css/main.css
-
-# Hard-Refresh im Browser
-Cmd+Shift+R / Ctrl+Shift+R
-```
-
-### Hugo findet Blöcke nicht
-- Prüfe `blocks:`-Liste in `content/_index.md`
-- Typ korrekt geschrieben? (`textblock` nicht `text-block`)
-
-### Anker-Links funktionieren nicht
-- ID muss im Block stehen, nicht im Daten-Objekt!
-```yaml
-# ❌ FALSCH
-slider:
-  id: bilder
-
-# ✅ RICHTIG
-blocks:
-  - type: slider
-    id: bilder
-```
-
----
-
-## Neue Kampagne anlegen
-
-1. **Ordner erstellen**
-   ```bash
-   mkdir -p content/kampagnen/neue-kampagne
-   mkdir -p static/images/neue-kampagne
-   ```
-
-2. **Dateien kopieren**
-   ```bash
-   cp content/kampagnen/demo/* content/kampagnen/neue-kampagne/
-   ```
-
-3. **`_index.md` anpassen**
-   - `kampagne: "neue-kampagne"`
-   - `theme_css: "neue-kampagne.css"`
-   - Hero, Blocks, Navigation anpassen
-
-4. **Theme erstellen** (optional)
-   ```bash
-   cp static/css/themes/demo.css static/css/themes/neue-kampagne.css
-   ```
-
-5. **Bilder hochladen** nach `static/images/neue-kampagne/`
-
-6. **Lokal testen:** `hugo server`
-
----
-
-## Lizenz & Credits
+## 📄 Lizenz & Credits
 
 - **Hugo:** Apache 2.0 License
 - **Tailwind CSS:** MIT License
-- **System:** Entwickelt für politische Kampagnenarbeit
+- **Entwickelt für:** Politische Kampagnenarbeit (GEW)
 
-**Projekt-Repository:** https://github.com/GEW-Bund/campa
+**Repository:** https://github.com/GEW-Bund/campa
