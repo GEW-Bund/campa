@@ -35,3 +35,17 @@
   --font-heading:      'Permanent Marker', cursive;
   --font-body:         'Liter', system-ui, sans-serif;
 }
+
+/* ============================================
+   Zeilenumbrüche in Content-Bereichen
+   ============================================
+   Respektiere Newlines aus Markdown im HTML.
+   Ermöglicht Redakteuren einfache Zeilenumbrüche
+   durch Enter-Taste ohne <br> oder Backslash.
+*/
+.textblock p,
+.imagetext-content p,
+.accordion-inner p,
+.faq-section p {
+  white-space: pre-line;
+}
