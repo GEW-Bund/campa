@@ -5,6 +5,7 @@
 <div class="section-{{ $bg }}" id="logos">
   <section class="logos-section">
     {{ with $title }}<p class="logos-label">{{ . }}</p>{{ end }}
+    {{ with $block.text }}<p class="logos-text">{{ . }}</p>{{ end }}
     <div class="logos-row">
       {{ range $block.items }}
       <img src="{{ .src }}" alt="{{ .alt }}" class="logo-item" loading="lazy" />
