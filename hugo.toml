@@ -13,3 +13,4 @@ title = "Kampagnen-Site"
       [markup.goldmark.parser.attribute]
         block = true
         title = true
+      hardLineBreak = true
