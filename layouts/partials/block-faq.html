@@ -5,7 +5,7 @@
 {{ $title := $block.title | default "Häufige Fragen" }}
 {{ $bg    := $block.bg    | default "light" }}
 {{ $id    := $block.id    | default "faq" }}
-{{ $faq   := $page.Site.GetPage (printf "/kampagnen/%s/%s" $kampagne $src) }}
+{{ $faq   := $page.Site.GetPage (printf "/%s/%s" $kampagne $src) }}
 
 {{ with $faq }}
 <div class="section-{{ $bg }}" id="{{ $id }}">
