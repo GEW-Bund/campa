@@ -2,6 +2,11 @@
 title: "FAQ"
 ---
 
+### Weitere Dokumente
+[Mythos Neutralität – Anhang mit Quellennachweise, Links und Literatur nach Kapiteln](https://www.gew.de/index.php?eID=dumpFile&t=f&f=162222&token=a9f1ee1bcd50f94a8f90f09d0da0c4a8bed9e14a&sdownload=&n=MythosNeutralitaet-SHZ-Anhang.pdf)
+
+[Lehrkräfte dürfen nicht neutral sein! – Plakat zum Ausdrucken](https://www.gew.de/index.php?eID=dumpFile&t=f&f=162224&token=4b284d840d3db859204f1b509ce3406824fa2c69&sdownload=&n=MythosNeutralitaet-SHZ-Plakat-druck.pdf)
+
 ### Einleitung (Seite 5–7)
 Zitatquelle: https://www.bundestag.de/dokumente/textarchiv/2026/kw05-gedenkstunde-bericht-1139760
 
