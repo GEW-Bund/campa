@@ -7,7 +7,7 @@ title: "Datenschutzerklärung"
 ## I. Datenschutzinformation
 Allgemeine Hinweise zum Datenschutz finden Sie auf [www.gew.de/datenschutz](https://www.gew.de/datenschutz)
 
-## II. Datenschutzerklärung für schule‑zeigt‑haltung.org
+## II. Ergänzende Datenschutzerklärung für schule‑zeigt‑haltung.org
 
 ### Präambel
 Der Schutz Ihrer Daten ist uns sehr wichtig. Daher möchten wir Sie nachfolgend informieren, welche Daten wir zu welchen Zwecken verwenden. Die Verantwortliche im Sinne der Datenschutz-Grundverordnung und anderer nationaler Datenschutzgesetze der Mitgliedsstaaten sowie sonstiger datenschutzrechtlicher Bestimmungen ist die:
